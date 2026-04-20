@@ -3,208 +3,384 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>BOK — Barter Of Knowledge</title>
+<title>BOK — Barter of Knowledge</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  :root {
-    --orange: #FF5C00;
-    --orange-light: #FF7A2E;
-    --orange-bg: #FFF3ED;
-    --purple: #7C3AED;
-    --purple-light: #9B6BF2;
-    --purple-bg: #F3EEFF;
-    --lime: #22C55E;
-    --lime-bg: #EDFBF3;
-    --text: #1A1A1A;
-    --text-2: #555555;
-    --text-3: #999999;
-    --border: #E8E8E8;
-    --surface: #FAFAFA;
-    --white: #FFFFFF;
-    --red: #EF4444;
-  }
-  html, body { height: 100%; background: #F0F0F0; font-family: 'Inter', sans-serif; }
-  #root { min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
-  .app { width: 100%; max-width: 430px; min-height: 100vh; background: var(--white); position: relative; }
-  @media (min-width: 430px) {
-    #root { align-items: center; padding: 20px; }
-    .app { min-height: auto; max-height: 900px; overflow-y: auto; box-shadow: 0 8px 40px rgba(0,0,0,0.12); border-radius: 24px; }
-  }
-  .topbar { background: var(--white); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
-  .logo { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; color: var(--orange); }
-  .logo-tagline { font-size: 9px; color: var(--text-3); line-height: 1.3; margin-top: 1px; }
-  .wallet-chip { display: flex; align-items: center; gap: 6px; background: var(--purple-bg); border: 1.5px solid var(--purple-light); padding: 6px 12px; border-radius: 20px; }
-  .wallet-val { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--purple); }
-  .wallet-label { font-size: 10px; color: var(--purple-light); font-weight: 500; }
-  .pdots { display: flex; gap: 6px; }
-  .pdot { width: 24px; height: 4px; border-radius: 2px; background: var(--border); transition: background 0.3s; }
-  .pdot.active { background: var(--orange); }
-  .pdot.done { background: var(--lime); }
-  .content { padding: 28px 20px 40px; }
-  .step-label { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); margin-bottom: 8px; }
-  .screen-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; line-height: 1.15; color: var(--text); margin-bottom: 8px; }
-  .screen-sub { font-size: 14px; color: var(--text-2); margin-bottom: 28px; line-height: 1.6; }
-  .field { margin-bottom: 16px; }
-  .field label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-2); margin-bottom: 6px; display: block; }
-  .field input, .field select, .field textarea { width: 100%; background: var(--surface); border: 1.5px solid var(--border); color: var(--text); font-family: 'Inter', sans-serif; font-size: 15px; padding: 13px 16px; outline: none; border-radius: 12px; transition: border-color 0.2s; appearance: none; box-sizing: border-box; }
-  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,92,0,0.08); }
-  .field input::placeholder { color: var(--text-3); }
-  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .btn { width: 100%; background: var(--orange); color: var(--white); font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; padding: 16px; border: none; cursor: pointer; border-radius: 12px; display: block; margin-top: 8px; transition: background 0.2s; }
-  .btn:hover { background: var(--orange-light); }
-  .btn-purple { background: var(--purple); }
-  .btn-purple:hover { background: var(--purple-light); }
-  .btn-lime { background: var(--lime); }
-  .btn-outline { width: 100%; background: transparent; border: 1.5px solid var(--border); color: var(--text-2); font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; padding: 14px; cursor: pointer; border-radius: 12px; display: block; margin-top: 8px; }
-  .divider { height: 1px; background: var(--border); margin: 20px 0; }
-  .note { font-size: 12px; color: var(--text-3); text-align: center; margin-top: 10px; line-height: 1.5; }
-  .link-text { text-align: center; font-size: 13px; color: var(--text-2); margin-top: 8px; }
-  .link-text span { color: var(--orange); font-weight: 600; cursor: pointer; }
-  .kyc-box { background: var(--surface); border: 2px dashed var(--border); padding: 22px 16px; text-align: center; margin-bottom: 14px; cursor: pointer; border-radius: 16px; transition: all 0.2s; }
-  .kyc-box:hover { border-color: var(--orange); background: var(--orange-bg); }
-  .kyc-box.done { border-color: var(--lime); background: var(--lime-bg); border-style: solid; }
-  .kyc-box.loading { border-color: var(--purple); background: var(--purple-bg); }
-  .kyc-icon { font-size: 28px; margin-bottom: 8px; }
-  .kyc-label { font-size: 13px; color: var(--text-2); line-height: 1.5; }
-  .kyc-note { font-size: 11px; color: var(--text-3); display: block; margin-top: 3px; }
-  .skilly-box { background: var(--purple-bg); border: 1.5px solid var(--purple-light); padding: 16px 20px; border-radius: 16px; margin-top: 16px; display: flex; align-items: center; gap: 16px; }
-  .skilly-val { font-family: 'Syne', sans-serif; font-size: 44px; font-weight: 800; color: var(--purple); line-height: 1; }
-  .sl { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--purple-light); }
-  .sd { font-size: 12px; color: var(--text-2); margin-top: 2px; line-height: 1.4; }
-  .dash-hero { background: linear-gradient(135deg, var(--orange) 0%, var(--purple) 100%); padding: 24px 20px 28px; }
-  .dash-greeting { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 500; margin-bottom: 2px; }
-  .dash-name { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; color: var(--white); margin-bottom: 20px; }
-  .dash-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-  .stat-card { background: rgba(255,255,255,0.15); padding: 12px; text-align: center; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); }
-  .stat-val { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; color: var(--white); line-height: 1; margin-bottom: 4px; }
-  .stat-label { font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.7); }
-  .dash-content { padding: 20px 20px 80px; }
-  .section-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
-  .action-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
-  .action-card { background: var(--white); border: 1.5px solid var(--border); padding: 18px 14px; cursor: pointer; border-radius: 16px; transition: all 0.2s; }
-  .action-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-  .action-card.maestro { border-top: 3px solid var(--lime); }
-  .action-card.allievo { border-top: 3px solid var(--orange); }
-  .ac-badge { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; margin-bottom: 10px; }
-  .ac-badge.m { background: var(--lime-bg); color: var(--lime); }
-  .ac-badge.a { background: var(--orange-bg); color: var(--orange); }
-  .ac-icon { font-size: 22px; margin-bottom: 8px; }
-  .ac-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-  .ac-desc { font-size: 11px; color: var(--text-3); line-height: 1.4; }
-  .comp-card { background: var(--surface); border: 1.5px solid var(--border); padding: 14px 16px; border-radius: 14px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-  .comp-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
-  .comp-area { font-size: 11px; color: var(--text-3); }
-  .comp-skilly { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--purple); }
-  .comp-skilly span { font-size: 10px; color: var(--text-3); font-family: 'Inter', sans-serif; font-weight: 400; }
-  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--white); border-top: 1px solid var(--border); display: flex; z-index: 20; }
-  .nav-item { flex: 1; padding: 10px 8px 12px; text-align: center; cursor: pointer; }
-  .nav-icon { font-size: 20px; margin-bottom: 2px; }
-  .nav-label { font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
-  .nav-item.active .nav-label { color: var(--orange); }
-  .search-bar { background: var(--surface); border: 1.5px solid var(--border); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; padding: 11px 16px; border-radius: 12px; width: 100%; outline: none; box-sizing: border-box; margin-bottom: 10px; }
-  .search-bar:focus { border-color: var(--orange); }
-  .filter-sel { background: var(--surface); border: 1.5px solid var(--border); color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; padding: 10px 14px; border-radius: 12px; width: 100%; outline: none; appearance: none; box-sizing: border-box; }
-  .maestro-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
-  .maestro-avatar { width: 42px; height: 42px; min-width: 42px; background: var(--orange-bg); border: 2px solid var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; color: var(--orange); }
-  .tag { display: inline-block; background: var(--surface); border: 1px solid var(--border); font-size: 10px; font-weight: 600; color: var(--text-2); padding: 3px 8px; border-radius: 6px; margin-right: 4px; }
-  .tag.orange { background: var(--orange-bg); border-color: var(--orange); color: var(--orange); }
-  .star { color: #FBBF24; font-size: 11px; }
-  .back-btn { background: var(--surface); border: 1.5px solid var(--border); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--text-2); flex-shrink: 0; }
-  .riepilogo-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px; padding: 16px; margin: 8px 0 20px; }
-  .riepilogo-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; color: var(--text-2); }
-  .riepilogo-row:last-child { margin-bottom: 0; border-top: 1px solid var(--border); padding-top: 8px; font-weight: 600; }
-  .blocco-banner { background: var(--orange-bg); border: 1.5px solid var(--orange); border-radius: 14px; padding: 14px 16px; margin: 16px 20px; display: flex; gap: 12px; }
-  .profilo-header { background: linear-gradient(135deg, var(--orange) 0%, var(--purple) 100%); padding: 28px 20px; text-align: center; }
-  .profilo-avatar { width: 72px; height: 72px; background: rgba(255,255,255,0.2); border: 3px solid rgba(255,255,255,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--white); margin: 0 auto 12px; }
-  .profilo-field { background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 13px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-  .profilo-field-label { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 2px; }
-  .profilo-field-val { font-size: 14px; color: var(--text); font-weight: 500; }
-  .edit-chip { background: var(--orange-bg); color: var(--orange); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 8px; cursor: pointer; border: none; font-family: 'Inter', sans-serif; }
-  .sessione-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
-  .sess-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; border-radius: 8px; margin-bottom: 10px; }
-  .empty-state { text-align: center; padding: 48px 20px; }
-  .empty-icon { font-size: 48px; margin-bottom: 16px; }
-  .empty-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-  .empty-desc { font-size: 13px; color: var(--text-3); line-height: 1.6; margin-bottom: 24px; }
-  .conferma-screen { padding: 40px 20px; text-align: center; }
-  .conferma-icon { width: 72px; height: 72px; background: var(--lime-bg); border: 3px solid var(--lime); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 28px; }
-  .welcome-step { display: flex; gap: 14px; margin-bottom: 20px; align-items: flex-start; }
-  .welcome-num { width: 32px; height: 32px; min-width: 32px; background: var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; color: var(--white); }
-  .wtitle { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
-  .wdesc { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --orange: #FF6B35; --orange2: #FF8C42; --orange-bg: #FFF4EF;
+  --green: #2ECC71; --green2: #27AE60; --green-bg: #EAFAF1;
+  --purple: #9B59B6; --purple2: #8E44AD; --purple-bg: #F5EEF8;
+  --yellow: #FFE066; --red: #E74C3C;
+  --text: #2C3E50; --text2: #7F8C8D; --text3: #BDC3C7;
+  --border: #ECF0F1; --surface: #F8F9FA; --white: #FFFFFF;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+}
+html, body { height: 100%; background: #F0F2F5; font-family: 'Inter', sans-serif; }
+#root { min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
+.app { width: 100%; max-width: 430px; min-height: 100vh; background: var(--white); position: relative; overflow-x: hidden; }
+@media (min-width: 430px) {
+  #root { align-items: center; padding: 20px; min-height: 100vh; }
+  .app { min-height: auto; max-height: 920px; overflow-y: auto; box-shadow: var(--shadow-lg); border-radius: 28px; }
+}
+
+/* ── SPLASH ── */
+.splash { min-height: 100vh; background: linear-gradient(160deg, #FF6B35 0%, #E91E8C 45%, #9B59B6 80%, #6C3483 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 28px; position: relative; overflow: hidden; }
+.splash::before { content: ''; position: absolute; top: -80px; right: -80px; width: 280px; height: 280px; background: rgba(255,255,255,0.06); border-radius: 50%; }
+.splash::after { content: ''; position: absolute; bottom: -60px; left: -60px; width: 220px; height: 220px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+.splash-logo-wrap { text-align: center; margin-bottom: 12px; animation: fadeUp 0.8s ease 0.1s both; }
+.splash-bok { font-family: 'Nunito', sans-serif; font-size: 96px; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -4px; text-shadow: 0 4px 24px rgba(0,0,0,0.2); }
+.splash-barter { font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 700; color: rgba(255,255,255,0.9); letter-spacing: 0.05em; margin-top: -4px; }
+.splash-italian { font-family: 'Inter', sans-serif; font-size: 13px; font-style: italic; color: rgba(255,255,255,0.6); margin-top: 4px; letter-spacing: 0.03em; }
+.splash-divider { width: 60px; height: 3px; background: rgba(255,255,255,0.4); border-radius: 2px; margin: 24px auto; animation: fadeUp 0.8s ease 0.3s both; }
+.splash-slogan { font-family: 'Nunito', sans-serif; font-size: 22px; font-weight: 800; color: #fff; text-align: center; line-height: 1.35; margin-bottom: 12px; animation: fadeUp 0.8s ease 0.4s both; }
+.splash-slogan em { color: var(--yellow); font-style: normal; }
+.splash-sub { font-size: 14px; color: rgba(255,255,255,0.7); text-align: center; line-height: 1.6; margin-bottom: 48px; animation: fadeUp 0.8s ease 0.5s both; }
+.splash-features { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; margin-bottom: 48px; animation: fadeUp 0.8s ease 0.6s both; }
+.splash-feature { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 14px; padding: 12px 16px; }
+.sf-icon { font-size: 22px; flex-shrink: 0; }
+.sf-text { font-size: 13px; color: rgba(255,255,255,0.9); font-weight: 600; line-height: 1.4; }
+.splash-btn { width: 100%; max-width: 340px; background: #fff; color: var(--orange); font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 900; padding: 18px; border: none; cursor: pointer; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); transition: all 0.2s; animation: fadeUp 0.8s ease 0.7s both; letter-spacing: 0.02em; }
+.splash-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.25); }
+.splash-btn:active { transform: scale(0.98); }
+.splash-note { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 16px; text-align: center; animation: fadeUp 0.8s ease 0.8s both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── TOPBAR ── */
+.topbar { background: var(--white); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 100; }
+.logo-wrap { display: flex; flex-direction: column; }
+.logo { font-family: 'Nunito', sans-serif; font-size: 24px; font-weight: 900; background: linear-gradient(135deg, var(--orange), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+.logo-barter { font-size: 9px; color: var(--text2); font-weight: 600; margin-top: 1px; letter-spacing: 0.05em; }
+.logo-italian { font-size: 8px; color: var(--text3); font-style: italic; }
+.wallet { display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, var(--purple), #6C3483); padding: 7px 14px; border-radius: 20px; box-shadow: 0 3px 10px rgba(155,89,182,0.3); }
+.wallet-val { font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 900; color: #fff; }
+.wallet-label { font-size: 10px; color: rgba(255,255,255,0.8); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.pdots { display: flex; gap: 6px; }
+.pdot { width: 26px; height: 5px; border-radius: 3px; background: var(--border); transition: all 0.3s; }
+.pdot.active { background: var(--orange); }
+.pdot.done { background: var(--green); }
+.back-btn { width: 36px; height: 36px; background: var(--surface); border: 2px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--text2); flex-shrink: 0; }
+
+/* ── CONTENT ── */
+.content { padding: 24px 20px 48px; }
+.step-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--orange-bg); border: 1.5px solid var(--orange); color: var(--orange); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 14px; }
+.screen-title { font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 900; color: var(--text); line-height: 1.15; margin-bottom: 8px; }
+.screen-sub { font-size: 14px; color: var(--text2); margin-bottom: 24px; line-height: 1.6; }
+.field { margin-bottom: 16px; }
+.field label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text2); margin-bottom: 7px; display: block; }
+.field input, .field select, .field textarea { width: 100%; background: var(--surface); border: 2px solid var(--border); color: var(--text); font-family: 'Inter', sans-serif; font-size: 15px; padding: 13px 16px; outline: none; border-radius: 14px; transition: all 0.2s; appearance: none; box-sizing: border-box; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--orange); background: var(--white); box-shadow: 0 0 0 4px rgba(255,107,53,0.1); }
+.field input::placeholder { color: var(--text3); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.btn { width: 100%; background: linear-gradient(135deg, var(--orange), var(--orange2)); color: #fff; font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 800; padding: 16px; border: none; cursor: pointer; border-radius: 16px; display: block; margin-top: 10px; transition: all 0.2s; box-shadow: 0 4px 14px rgba(255,107,53,0.35); }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,107,53,0.4); }
+.btn:active { transform: scale(0.98); }
+.btn-green { background: linear-gradient(135deg, var(--green), var(--green2)); box-shadow: 0 4px 14px rgba(46,204,113,0.35); }
+.btn-purple { background: linear-gradient(135deg, var(--purple), var(--purple2)); box-shadow: 0 4px 14px rgba(155,89,182,0.35); }
+.btn-outline { width: 100%; background: transparent; border: 2px solid var(--border); color: var(--text2); font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; padding: 14px; cursor: pointer; border-radius: 16px; display: block; margin-top: 10px; }
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+.note { font-size: 12px; color: var(--text3); text-align: center; margin-top: 12px; line-height: 1.5; }
+.link-row { text-align: center; font-size: 14px; color: var(--text2); margin-top: 10px; }
+.link-row span { color: var(--orange); font-weight: 700; cursor: pointer; }
+
+/* ── KYC ── */
+.kyc-box { background: var(--surface); border: 2px dashed var(--border); padding: 22px 16px; text-align: center; margin-bottom: 14px; cursor: pointer; border-radius: 18px; transition: all 0.2s; }
+.kyc-box:hover { border-color: var(--orange); background: var(--orange-bg); transform: translateY(-1px); }
+.kyc-box.done { border-color: var(--green); background: var(--green-bg); border-style: solid; }
+.kyc-box.loading { border-color: var(--purple); background: var(--purple-bg); border-style: solid; }
+.kyc-icon { font-size: 30px; margin-bottom: 10px; }
+.kyc-label { font-size: 14px; color: var(--text2); font-weight: 600; line-height: 1.5; }
+.kyc-note { font-size: 11px; color: var(--text3); display: block; margin-top: 4px; font-weight: 400; }
+
+/* ── SKILLY REWARD ── */
+.skilly-reward { background: linear-gradient(135deg, #6C3483, var(--purple)); border-radius: 20px; padding: 20px; margin-top: 16px; display: flex; align-items: center; gap: 16px; box-shadow: 0 6px 20px rgba(155,89,182,0.3); }
+.skilly-reward-val { font-family: 'Nunito', sans-serif; font-size: 52px; font-weight: 900; color: #fff; line-height: 1; }
+.sr-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+.sr-desc { font-size: 13px; color: rgba(255,255,255,0.85); margin-top: 4px; line-height: 1.4; font-weight: 500; }
+
+/* ── PACCHETTI ── */
+.pack-cards { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+.pack-card { border: 2px solid var(--border); border-radius: 18px; padding: 16px; cursor: pointer; transition: all 0.2s; position: relative; background: var(--white); }
+.pack-card:hover { border-color: var(--orange); transform: translateY(-1px); box-shadow: var(--shadow); }
+.pack-card.selected { border-color: var(--orange); background: var(--orange-bg); box-shadow: 0 4px 16px rgba(255,107,53,0.2); }
+.pack-card.selected-green { border-color: var(--green); background: var(--green-bg); box-shadow: 0 4px 16px rgba(46,204,113,0.2); }
+.pack-card.selected-purple { border-color: var(--purple); background: var(--purple-bg); box-shadow: 0 4px 16px rgba(155,89,182,0.2); }
+.pack-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.pack-name { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 800; color: var(--text); }
+.pack-badge { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; border-radius: 10px; }
+.pb-orange { background: var(--orange-bg); color: var(--orange); border: 1.5px solid var(--orange); }
+.pb-green { background: var(--green-bg); color: var(--green2); border: 1.5px solid var(--green); }
+.pb-purple { background: var(--purple-bg); color: var(--purple2); border: 1.5px solid var(--purple); }
+.pack-price { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
+.pack-skilly { font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 900; color: var(--purple); }
+.pack-unit { font-size: 12px; color: var(--text2); font-weight: 500; }
+.pack-bonus { font-size: 12px; font-weight: 700; color: var(--green2); margin-bottom: 6px; }
+.pack-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+.pack-best { position: absolute; top: -10px; right: 14px; background: linear-gradient(135deg, var(--orange), var(--purple)); color: #fff; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 8px; letter-spacing: 0.05em; }
+.pack-check { position: absolute; top: 14px; right: 14px; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.pc-orange { background: var(--orange); color: #fff; }
+.pc-green { background: var(--green); color: #fff; }
+.pc-purple { background: var(--purple); color: #fff; }
+
+/* ── RIEPILOGO PACCHETTO ── */
+.pack-summary { background: linear-gradient(135deg, var(--purple-bg), #EDE0F7); border: 2px solid #C39BD3; border-radius: 18px; padding: 18px; margin: 12px 0 20px; }
+.ps-title { font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800; color: var(--purple2); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+.ps-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); margin-bottom: 6px; font-weight: 500; }
+.ps-row.total { font-weight: 800; color: var(--text); border-top: 1px solid #C39BD3; padding-top: 8px; margin-top: 4px; }
+.ps-val { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 800; color: var(--purple); }
+.ps-val.green { color: var(--green2); }
+.ps-val.orange { color: var(--orange); }
+
+/* ── HERO ── */
+.hero-splash { background: linear-gradient(160deg, var(--orange) 0%, #E91E8C 50%, var(--purple) 100%); padding: 24px 20px 28px; position: relative; overflow: hidden; }
+.hero-splash::before { content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; background: rgba(255,255,255,0.06); border-radius: 50%; }
+.hero-greeting { font-size: 13px; color: rgba(255,255,255,0.75); font-weight: 600; margin-bottom: 2px; }
+.hero-name { font-family: 'Nunito', sans-serif; font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 18px; }
+.streak-bar { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.15); border-radius: 14px; padding: 10px 14px; margin-bottom: 14px; }
+.streak-count { font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 900; color: var(--yellow); }
+.stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.stat-pill { background: rgba(255,255,255,0.18); border-radius: 14px; padding: 12px 8px; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
+.stat-num { font-family: 'Nunito', sans-serif; font-size: 24px; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 3px; }
+.stat-lbl { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+
+/* ── ACTION CARDS ── */
+.action-section { padding: 18px 20px 0; }
+.section-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.section-title { font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 800; color: var(--text); }
+.see-all { font-size: 13px; font-weight: 700; color: var(--orange); cursor: pointer; }
+.action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 22px; }
+.action-card { border-radius: 20px; padding: 18px 14px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
+.action-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.action-card.maestro { background: linear-gradient(135deg, #EAFAF1, #D5F5E3); border-color: #A9DFBF; }
+.action-card.allievo { background: linear-gradient(135deg, #FFF4EF, #FDEBD0); border-color: #FAD7A0; }
+.ac-emoji { font-size: 30px; margin-bottom: 10px; display: block; }
+.ac-role { font-size: 10px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; border-radius: 8px; display: inline-block; margin-bottom: 8px; }
+.ac-role.m { background: rgba(46,204,113,0.2); color: var(--green2); }
+.ac-role.a { background: rgba(255,107,53,0.2); color: var(--orange); }
+.ac-title { font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.ac-desc { font-size: 11px; color: var(--text2); line-height: 1.4; }
+.comp-card { background: var(--white); border: 2px solid var(--border); padding: 14px; border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow); }
+.comp-avatar { width: 42px; height: 42px; min-width: 42px; border-radius: 14px; background: linear-gradient(135deg, var(--purple), var(--orange)); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.comp-title { font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+.comp-sub { font-size: 11px; color: var(--text2); }
+.comp-zone { font-size: 10px; color: var(--orange); font-weight: 700; margin-top: 2px; }
+.comp-badge { background: linear-gradient(135deg, var(--purple), var(--purple2)); color: #fff; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 900; padding: 6px 10px; border-radius: 10px; white-space: nowrap; margin-left: auto; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--white); border-top: 2px solid var(--border); display: flex; z-index: 200; padding: 4px 0 8px; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 4px 4px; cursor: pointer; }
+.nav-icon { font-size: 22px; margin-bottom: 2px; }
+.nav-lbl { font-size: 9px; font-weight: 700; color: var(--text3); letter-spacing: 0.05em; }
+.nav-item.active .nav-lbl { color: var(--orange); }
+.nav-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); margin-top: 3px; }
+
+/* ── CATALOGO ── */
+.cat-header { background: var(--white); padding: 14px 20px 12px; border-bottom: 2px solid var(--border); }
+.cat-title { font-family: 'Nunito', sans-serif; font-size: 19px; font-weight: 900; color: var(--text); margin-bottom: 12px; }
+.search-wrap { position: relative; margin-bottom: 10px; }
+.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; }
+.search-input { width: 100%; background: var(--surface); border: 2px solid var(--border); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; padding: 11px 16px 11px 40px; border-radius: 14px; outline: none; box-sizing: border-box; }
+.search-input:focus { border-color: var(--orange); }
+.filters { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.filter-sel { background: var(--surface); border: 2px solid var(--border); color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; padding: 9px 12px; border-radius: 12px; width: 100%; outline: none; appearance: none; cursor: pointer; }
+
+/* ── MAESTRO CARD ── */
+.maestro-card { background: var(--white); border: 2px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 16px; box-shadow: var(--shadow); transition: all 0.2s; }
+.maestro-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.mc-photo { height: 80px; display: flex; align-items: center; justify-content: center; position: relative; }
+.mc-initials { font-family: 'Nunito', sans-serif; font-size: 34px; font-weight: 900; color: rgba(255,255,255,0.9); }
+.mc-skilly { position: absolute; top: 10px; right: 10px; background: var(--white); border-radius: 12px; padding: 4px 10px; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.mcs-val { font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 900; color: var(--purple); }
+.mcs-lbl { font-size: 9px; color: var(--text2); font-weight: 600; }
+.mc-body { padding: 14px 16px; }
+.mc-name { font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+.mc-area { font-size: 12px; color: var(--text2); font-weight: 600; margin-bottom: 6px; }
+.mc-desc { font-size: 12px; color: var(--text2); line-height: 1.5; margin-bottom: 10px; }
+.mc-meta { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.meta-chip { display: flex; align-items: center; gap: 4px; background: var(--surface); border: 1.5px solid var(--border); padding: 3px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; color: var(--text2); }
+.meta-chip.zona { border-color: var(--orange); color: var(--orange); background: var(--orange-bg); }
+.stars { color: #F1C40F; font-size: 11px; }
+.prenota-btn { width: 100%; background: linear-gradient(135deg, var(--orange), var(--orange2)); color: #fff; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; padding: 12px; border: none; border-radius: 14px; cursor: pointer; transition: all 0.2s; }
+.prenota-btn:hover { transform: translateY(-1px); }
+.blocco-btn { width: 100%; background: var(--surface); color: var(--text3); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; padding: 12px; border: 2px dashed var(--border); border-radius: 14px; cursor: not-allowed; }
+.blocco-alert { background: var(--orange-bg); border: 2px solid var(--orange); border-radius: 16px; padding: 14px 16px; margin: 14px 20px; display: flex; gap: 12px; }
+
+/* ── PRENOTAZIONE ── */
+.pren-mc { background: var(--surface); border: 2px solid var(--border); border-radius: 18px; padding: 14px; margin-bottom: 18px; display: flex; gap: 12px; align-items: center; }
+.pren-av { width: 48px; height: 48px; min-width: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 900; color: #fff; }
+.riepilogo { background: var(--surface); border: 2px solid var(--border); border-radius: 16px; padding: 16px; margin: 10px 0 18px; }
+.rie-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; font-size: 13px; color: var(--text2); border-bottom: 1px solid var(--border); font-weight: 500; }
+.rie-row:last-child { border-bottom: none; padding-top: 10px; font-weight: 800; color: var(--text); }
+.rie-val { font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 800; color: var(--purple); }
+
+/* ── CONFERMA ── */
+.conferma { padding: 48px 20px; text-align: center; }
+.conf-circle { width: 80px; height: 80px; background: linear-gradient(135deg, var(--green), var(--green2)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 36px; box-shadow: 0 8px 24px rgba(46,204,113,0.35); }
+.skilly-chip { display: inline-flex; align-items: center; gap: 12px; background: var(--purple-bg); border: 2px solid #C39BD3; padding: 14px 24px; border-radius: 18px; margin-bottom: 28px; }
+.sc-val { font-family: 'Nunito', sans-serif; font-size: 38px; font-weight: 900; color: var(--purple); }
+
+/* ── SESSIONI ── */
+.tab-bar { display: flex; gap: 8px; padding: 14px 20px; background: var(--white); border-bottom: 2px solid var(--border); }
+.tab-btn { flex: 1; padding: 10px 8px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800; border: 2px solid var(--border); background: var(--surface); color: var(--text2); border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+.tab-btn.am { border-color: var(--green); background: var(--green-bg); color: var(--green2); }
+.tab-btn.aa { border-color: var(--orange); background: var(--orange-bg); color: var(--orange); }
+.sess-card { background: var(--white); border: 2px solid var(--border); border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
+.sess-status { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 10px; margin-bottom: 10px; }
+.s-attesa { background: #FEF9C3; color: #854D0E; }
+.s-completata { background: var(--green-bg); color: var(--green2); }
+.avvia-btn { width: 100%; background: linear-gradient(135deg, var(--green), var(--green2)); color: #fff; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; padding: 13px; border: none; border-radius: 14px; cursor: pointer; }
+.empty-state { text-align: center; padding: 56px 20px; }
+.empty-emoji { font-size: 52px; margin-bottom: 16px; }
+.empty-title { font-family: 'Nunito', sans-serif; font-size: 19px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+.empty-desc { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 24px; }
+
+/* ── PROFILO ── */
+.prof-header { background: linear-gradient(160deg, var(--orange) 0%, #E91E8C 50%, var(--purple) 100%); padding: 28px 20px 24px; position: relative; overflow: hidden; }
+.prof-header::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.06); border-radius: 50%; }
+.prof-avatar { width: 76px; height: 76px; background: rgba(255,255,255,0.25); border: 4px solid rgba(255,255,255,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 900; color: #fff; margin: 0 auto 10px; }
+.prof-name { font-family: 'Nunito', sans-serif; font-size: 21px; font-weight: 900; color: #fff; text-align: center; margin-bottom: 3px; }
+.prof-city { font-size: 13px; color: rgba(255,255,255,0.75); text-align: center; font-weight: 600; }
+.prof-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 18px; }
+.prof-stat { background: rgba(255,255,255,0.15); border-radius: 14px; padding: 12px 8px; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
+.ps-val { font-family: 'Nunito', sans-serif; font-size: 22px; font-weight: 900; color: #fff; }
+.ps-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.7); }
+.prof-content { padding: 18px 20px 80px; }
+.prof-field { background: var(--surface); border: 2px solid var(--border); border-radius: 14px; padding: 13px 16px; margin-bottom: 10px; }
+.pf-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+.pf-val { font-size: 15px; color: var(--text); font-weight: 600; }
+.edit-btn { background: var(--orange-bg); color: var(--orange); font-size: 12px; font-weight: 800; padding: 6px 14px; border-radius: 10px; cursor: pointer; border: 1.5px solid var(--orange); font-family: 'Nunito', sans-serif; }
+
+/* ── BENVENUTO ── */
+.welcome-card { background: var(--green-bg); border: 2px solid #A9DFBF; border-radius: 16px; padding: 14px 16px; margin-bottom: 20px; display: flex; gap: 12px; align-items: center; }
+.ws-num { width: 34px; height: 34px; min-width: 34px; background: linear-gradient(135deg, var(--orange), var(--orange2)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 900; color: #fff; }
+.ws-title { font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.ws-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
 const { useState } = React;
+
 const LIVELLI = {
-  '2':{label:'Scuola elementare',skilly:2},
-  '5':{label:'Liceo standard',skilly:5},
-  '8':{label:'Liceo avanzato / Triennale',skilly:8},
-  '12':{label:'Magistrale',skilly:12},
-  '20':{label:'Dottorato',skilly:20},
-  '26':{label:'Professionista 10+ anni',skilly:26},
+  '2':{label:'Scuola elementare',skilly:2,emoji:'📚'},
+  '5':{label:'Liceo standard',skilly:5,emoji:'🏫'},
+  '8':{label:'Liceo avanzato / Triennale',skilly:8,emoji:'🎓'},
+  '12':{label:'Magistrale',skilly:12,emoji:'🔬'},
+  '20':{label:'Dottorato',skilly:20,emoji:'🏆'},
+  '26':{label:'Professionista 10+ anni',skilly:26,emoji:'⭐'},
 };
-const ZONE = ['Tutta Italia','Nord Italia','Centro Italia','Sud Italia e Isole','Valle d\'Aosta','Piemonte','Lombardia','Trentino-Alto Adige','Veneto','Friuli-Venezia Giulia','Liguria','Emilia-Romagna','Toscana','Umbria','Marche','Lazio','Abruzzo','Molise','Campania','Puglia','Basilicata','Calabria','Sicilia','Sardegna'];
+const ZONE = ['Tutta Italia','Nord Italia','Centro Italia','Sud Italia e Isole','Piemonte','Lombardia','Veneto','Emilia-Romagna','Toscana','Lazio','Campania','Sicilia','Sardegna','Puglia','Calabria','Liguria','Marche','Abruzzo','Umbria','Basilicata','Molise','Trentino-Alto Adige','Friuli-Venezia Giulia',"Valle d'Aosta"];
+const AREE = ['istruzione','lingue','informatica','giuridico','salute','ingegneria','arte','musica','sport','business'];
 const MAESTRI = [
-  {id:1,nome:'Sara Conti',area:'Matematica',macro:'istruzione',livello:'12',skilly:12,media:9.4,sessioni:34,zona:'Lombardia',desc:'Analisi, algebra lineare e statistica. Magistrale in Matematica alla Sapienza.'},
-  {id:2,nome:'Luca Ferretti',area:'Python',macro:'informatica',livello:'8',skilly:8,media:8.7,sessioni:21,zona:'Tutta Italia',desc:'Python per principianti e intermedi. Data science e automazione.'},
-  {id:3,nome:'Maria Esposito',area:'Inglese B2-C1',macro:'lingue',livello:'8',skilly:8,media:9.8,sessioni:67,zona:'Campania',desc:'Preparazione Cambridge, conversazione avanzata, business English.'},
-  {id:4,nome:'Roberto Mancini',area:'Diritto del lavoro',macro:'giuridico',livello:'26',skilly:26,media:9.1,sessioni:18,zona:'Lazio',desc:'Avvocato specializzato. Contratti, licenziamenti, tutele sindacali.'},
-  {id:5,nome:'Giulia Romano',area:'Chitarra classica',macro:'musica',livello:'20',skilly:20,media:9.6,sessioni:45,zona:'Toscana',desc:'Conservatorio di Milano. Tecnica classica, solfeggio, teoria musicale.'},
-  {id:6,nome:'Andrea Bianchi',area:'Fotografia',macro:'arte',livello:'8',skilly:8,media:8.3,sessioni:12,zona:'Piemonte',desc:'Composizione, luce naturale, post-produzione Lightroom.'},
-  {id:7,nome:'Chiara Lombardi',area:'Nutrizione sportiva',macro:'salute',livello:'20',skilly:20,media:9.2,sessioni:29,zona:'Tutta Italia',desc:'Biologa nutrizionista. Piani alimentari per sport amatoriale e agonistico.'},
-  {id:8,nome:'Marco Venezia',area:'Marketing digitale',macro:'business',livello:'26',skilly:26,media:8.9,sessioni:41,zona:'Veneto',desc:'15 anni di esperienza. SEO, social media strategy, Google Ads.'},
+  {id:1,nome:'Sara Conti',area:'Matematica',macro:'istruzione',livello:'12',skilly:12,media:9.4,sessioni:34,zona:'Lombardia',desc:'Analisi, algebra lineare e statistica. Magistrale in Matematica alla Sapienza.',emoji:'📐'},
+  {id:2,nome:'Luca Ferretti',area:'Python & Data Science',macro:'informatica',livello:'8',skilly:8,media:8.7,sessioni:21,zona:'Tutta Italia',desc:'Python per principianti e intermedi. Automazione e analisi dati.',emoji:'💻'},
+  {id:3,nome:'Maria Esposito',area:'Inglese B2-C1',macro:'lingue',livello:'8',skilly:8,media:9.8,sessioni:67,zona:'Campania',desc:'Preparazione Cambridge, conversazione avanzata, business English.',emoji:'🇬🇧'},
+  {id:4,nome:'Roberto Mancini',area:'Diritto del lavoro',macro:'giuridico',livello:'26',skilly:26,media:9.1,sessioni:18,zona:'Lazio',desc:'Avvocato specializzato. Contratti, licenziamenti, tutele sindacali.',emoji:'⚖️'},
+  {id:5,nome:'Giulia Romano',area:'Chitarra classica',macro:'musica',livello:'20',skilly:20,media:9.6,sessioni:45,zona:'Toscana',desc:'Conservatorio di Milano. Tecnica classica, solfeggio, teoria musicale.',emoji:'🎸'},
+  {id:6,nome:'Andrea Bianchi',area:'Fotografia',macro:'arte',livello:'8',skilly:8,media:8.3,sessioni:12,zona:'Piemonte',desc:'Composizione, luce naturale, post-produzione Lightroom.',emoji:'📷'},
+  {id:7,nome:'Chiara Lombardi',area:'Nutrizione sportiva',macro:'salute',livello:'20',skilly:20,media:9.2,sessioni:29,zona:'Tutta Italia',desc:'Biologa nutrizionista. Piani alimentari per sport amatoriale e agonistico.',emoji:'🥗'},
+  {id:8,nome:'Marco Venezia',area:'Marketing digitale',macro:'business',livello:'26',skilly:26,media:8.9,sessioni:41,zona:'Veneto',desc:'15 anni di esperienza. SEO, social media strategy, Google Ads.',emoji:'📱'},
 ];
+const GRADIENTS = [
+  'linear-gradient(135deg,#FF6B35,#E91E8C)',
+  'linear-gradient(135deg,#3498DB,#9B59B6)',
+  'linear-gradient(135deg,#2ECC71,#3498DB)',
+  'linear-gradient(135deg,#E91E8C,#9B59B6)',
+  'linear-gradient(135deg,#F39C12,#FF6B35)',
+  'linear-gradient(135deg,#1ABC9C,#3498DB)',
+  'linear-gradient(135deg,#9B59B6,#E91E8C)',
+  'linear-gradient(135deg,#FF6B35,#F39C12)',
+];
+
 function Stars({val}) {
-  return <span className="star">{'★'.repeat(Math.floor(val/2))}{'☆'.repeat(5-Math.floor(val/2))} <span style={{color:'#999',fontSize:'11px'}}>{val}</span></span>;
+  const f=Math.floor(val/2);
+  return <span><span className="stars">{'★'.repeat(f)}{'☆'.repeat(5-f)}</span> <span style={{fontSize:'11px',color:'#7F8C8D',fontWeight:'600'}}>{val}</span></span>;
 }
+
 function Topbar({showWallet,wallet,steps,currentStep,onBack}) {
   return (
     <div className="topbar">
       <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
-        {onBack&&<button className="back-btn" onClick={onBack}>←</button>}
-        <div>
+        {onBack&&<div className="back-btn" onClick={onBack}>←</div>}
+        <div className="logo-wrap">
           <div className="logo">BOK</div>
-          <div className="logo-tagline">Insegna quello che sai.<br/>Impara quello che vuoi. Gratis.</div>
+          <div className="logo-barter">Barter of Knowledge</div>
+          <div className="logo-italian">Il baratto della conoscenza</div>
         </div>
       </div>
-      {showWallet?<div className="wallet-chip"><span className="wallet-val">{wallet}</span><span className="wallet-label">Skilly</span></div>
-      :steps?<div className="pdots">{[1,2,3].map(i=><div key={i} className={`pdot ${i<currentStep?'done':i===currentStep?'active':''}`}></div>)}</div>
-      :null}
+      {showWallet&&<div className="wallet"><span style={{fontSize:'14px'}}>💎</span><span className="wallet-val">{wallet}</span><span className="wallet-label">Skilly</span></div>}
+      {steps&&<div className="pdots">{[1,2,3].map(i=><div key={i} className={`pdot ${i<currentStep?'done':i===currentStep?'active':''}`}/>)}</div>}
     </div>
   );
 }
+
+// ── SPLASH ──
+function Splash({onEntra}) {
+  return (
+    <div className="splash">
+      <div className="splash-logo-wrap">
+        <div className="splash-bok">BOK</div>
+        <div className="splash-barter">Barter of Knowledge</div>
+        <div className="splash-italian">Il baratto della conoscenza</div>
+      </div>
+      <div className="splash-divider"/>
+      <p className="splash-slogan">Dopo l'<em>intelligenza artificiale</em>…<br/>torniamo all'<em>analogico!</em></p>
+      <p className="splash-sub">La prima piattaforma dove la valuta è la conoscenza. Non il denaro.</p>
+      <div className="splash-features">
+        <div className="splash-feature">
+          <span className="sf-icon">🎓</span>
+          <span className="sf-text">Insegna quello che sai. Accumula Skilly.</span>
+        </div>
+        <div className="splash-feature">
+          <span className="sf-icon">💎</span>
+          <span className="sf-text">Usa gli Skilly per imparare da altri. Gratis.</span>
+        </div>
+        <div className="splash-feature">
+          <span className="sf-icon">🤝</span>
+          <span className="sf-text">Pacchetti 5 o 10 lezioni con bonus per entrambi.</span>
+        </div>
+      </div>
+      <button className="splash-btn" onClick={onEntra}>Entra in BOK →</button>
+      <p className="splash-note">Già iscritto? Accedi dal tuo account</p>
+    </div>
+  );
+}
+
+// ── STEP 1 ──
 function Step1({onNext}) {
   const [f,setF]=useState({nome:'',cognome:'',nascita:'',email:'',password:'',citta:''});
   const s=(k,v)=>setF(p=>({...p,[k]:v}));
-  return <div><Topbar steps currentStep={1}/>
-    <div className="content">
-      <p className="step-label">Passo 1 di 3</p>
-      <h2 className="screen-title">Chi sei? 👋</h2>
-      <p className="screen-sub">Iniziamo con i tuoi dati. Servono per verificare la tua identità e proteggere tutti gli utenti.</p>
-      <div className="row2">
-        <div className="field"><label>Nome</label><input type="text" placeholder="Mario" value={f.nome} onChange={e=>s('nome',e.target.value)}/></div>
-        <div className="field"><label>Cognome</label><input type="text" placeholder="Rossi" value={f.cognome} onChange={e=>s('cognome',e.target.value)}/></div>
+  return (
+    <div>
+      <Topbar steps currentStep={1}/>
+      <div className="content">
+        <div className="step-pill">✨ Passo 1 di 3</div>
+        <h2 className="screen-title">Ciao! 👋<br/>Chi sei?</h2>
+        <p className="screen-sub">Iniziamo con i tuoi dati. Servono per verificare la tua identità e proteggere tutti gli utenti di BOK.</p>
+        <div className="row2">
+          <div className="field"><label>Nome</label><input type="text" placeholder="Mario" value={f.nome} onChange={e=>s('nome',e.target.value)}/></div>
+          <div className="field"><label>Cognome</label><input type="text" placeholder="Rossi" value={f.cognome} onChange={e=>s('cognome',e.target.value)}/></div>
+        </div>
+        <div className="field"><label>Data di nascita</label><input type="date" value={f.nascita} onChange={e=>s('nascita',e.target.value)}/></div>
+        <div className="field"><label>Email</label><input type="email" placeholder="mario@email.com" value={f.email} onChange={e=>s('email',e.target.value)}/></div>
+        <div className="field"><label>Password</label><input type="password" placeholder="Minimo 8 caratteri" value={f.password} onChange={e=>s('password',e.target.value)}/></div>
+        <div className="field"><label>Città</label><input type="text" placeholder="Roma" value={f.citta} onChange={e=>s('citta',e.target.value)}/></div>
+        <button className="btn" onClick={()=>onNext(f)}>Continua →</button>
+        <p className="note">🔒 I tuoi dati sono al sicuro. Nessuna cessione a terzi.</p>
+        <div className="divider"/>
+        <p className="link-row">Hai già un account? <span>Accedi</span></p>
       </div>
-      <div className="field"><label>Data di nascita</label><input type="date" value={f.nascita} onChange={e=>s('nascita',e.target.value)}/></div>
-      <div className="field"><label>Email</label><input type="email" placeholder="mario@email.com" value={f.email} onChange={e=>s('email',e.target.value)}/></div>
-      <div className="field"><label>Password</label><input type="password" placeholder="Minimo 8 caratteri" value={f.password} onChange={e=>s('password',e.target.value)}/></div>
-      <div className="field"><label>Città</label><input type="text" placeholder="Roma" value={f.citta} onChange={e=>s('citta',e.target.value)}/></div>
-      <button className="btn" onClick={()=>onNext(f)}>Avanti →</button>
-      <p className="note">🔒 I tuoi dati sono al sicuro. Nessuna cessione a terzi.</p>
-      <div className="divider"/>
-      <p className="link-text">Hai già un account? <span>Accedi</span></p>
     </div>
-  </div>;
+  );
 }
+
+// ── STEP 2 ──
 function Step2({onNext,onBack}) {
   const [doc,setDoc]=useState('idle');
   const [selfie,setSelfie]=useState('idle');
@@ -214,86 +390,258 @@ function Step2({onNext,onBack}) {
       <div className="kyc-icon">{stato==='loading'?'⏳':stato==='done'?'✅':icon}</div>
       <p className="kyc-label">
         {stato==='idle'&&<>{label}<span className="kyc-note">{note}</span></>}
-        {stato==='loading'&&<span style={{color:'#7C3AED',fontWeight:'600'}}>Caricamento in corso...</span>}
-        {stato==='done'&&<span style={{color:'#22C55E',fontWeight:'600'}}>Caricato con successo ✓</span>}
+        {stato==='loading'&&<span style={{color:'#9B59B6',fontWeight:'700'}}>Caricamento in corso...</span>}
+        {stato==='done'&&<span style={{color:'#27AE60',fontWeight:'700'}}>Caricato con successo ✓</span>}
       </p>
     </div>
   );
-  return <div><Topbar steps currentStep={2}/>
-    <div className="content">
-      <p className="step-label">Passo 2 di 3</p>
-      <h2 className="screen-title">Verifica identità 🪪</h2>
-      <p className="screen-sub">BOK verifica chi sei prima di attivare il tuo account. È una misura di sicurezza per proteggere tutti.</p>
-      <Box stato={doc} onTap={()=>sim(setDoc)} icon="🪪" label="Carica documento d'identità" note="Carta d'identità o passaporto — fronte e retro. Tocca per caricare."/>
-      <Box stato={selfie} onTap={()=>sim(setSelfie)} icon="🤳" label="Scatta un selfie con il documento" note="Tieni il documento accanto al viso. Tocca per scattare."/>
-      <p className="note" style={{textAlign:'left',margin:'0 0 20px'}}>La verifica avviene entro 24 ore. Riceverai una email di conferma.</p>
-      <button className="btn" onClick={onNext}>Avanti →</button>
-      <button className="btn-outline" onClick={onBack}>← Indietro</button>
+  return (
+    <div>
+      <Topbar steps currentStep={2}/>
+      <div className="content">
+        <div className="step-pill">🔐 Passo 2 di 3</div>
+        <h2 className="screen-title">Verifica<br/>identità</h2>
+        <p className="screen-sub">BOK verifica chi sei prima di attivare il tuo account. Serve per proteggere tutta la community.</p>
+        <Box stato={doc} onTap={()=>sim(setDoc)} icon="🪪" label="Carica documento d'identità" note="Carta d'identità o passaporto — fronte e retro. Tocca qui."/>
+        <Box stato={selfie} onTap={()=>sim(setSelfie)} icon="🤳" label="Scatta un selfie con il documento" note="Tieni il documento accanto al viso, ben visibile."/>
+        <p className="note" style={{textAlign:'left',margin:'0 0 20px'}}>⏱️ La verifica avviene entro 24 ore. Riceverai una email di conferma.</p>
+        <button className="btn" onClick={onNext}>Continua →</button>
+        <button className="btn-outline" onClick={onBack}>← Indietro</button>
+      </div>
     </div>
-  </div>;
+  );
 }
+
+// ── STEP 3 ──
 function Step3({onNext,onBack}) {
   const [area,setArea]=useState('');
   const [livello,setLivello]=useState('');
   const [desc,setDesc]=useState('');
   const [zona,setZona]=useState('');
-  const sk=livello?LIVELLI[livello]?.skilly:null;
-  return <div><Topbar steps currentStep={3}/>
-    <div className="content">
-      <p className="step-label">Passo 3 di 3</p>
-      <h2 className="screen-title">Cosa sai fare? 🎓</h2>
-      <p className="screen-sub">Deposita la tua prima competenza. Da qui guadagni i tuoi Skilly — la valuta con cui imparerai da altri.</p>
-      <div className="field"><label>Area di competenza</label>
-        <select value={area} onChange={e=>setArea(e.target.value)}>
-          <option value="">Scegli un'area...</option>
-          {['istruzione','lingue','informatica','giuridico','salute','ingegneria','arte','musica','sport','business'].map(a=>(
-            <option key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</option>
-          ))}
-        </select>
+  const lv=livello?LIVELLI[livello]:null;
+  const sel={width:'100%',background:'#F8F9FA',border:'2px solid #ECF0F1',color:'#2C3E50',fontFamily:"'Inter',sans-serif",fontSize:'15px',padding:'13px 16px',outline:'none',borderRadius:'14px',boxSizing:'border-box',appearance:'none'};
+  return (
+    <div>
+      <Topbar steps currentStep={3}/>
+      <div className="content">
+        <div className="step-pill">🎓 Passo 3 di 3</div>
+        <h2 className="screen-title">Cosa sai<br/>fare?</h2>
+        <p className="screen-sub">Deposita la tua prima competenza. Da qui guadagni i tuoi Skilly — la valuta con cui imparerai da altri su BOK.</p>
+        <div className="field"><label>Area di competenza</label>
+          <select value={area} onChange={e=>setArea(e.target.value)} style={sel}>
+            <option value="">Scegli un'area...</option>
+            {AREE.map(a=><option key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</option>)}
+          </select>
+        </div>
+        <div className="field"><label>Livello</label>
+          <select value={livello} onChange={e=>setLivello(e.target.value)} style={sel}>
+            <option value="">Scegli il tuo livello...</option>
+            {Object.entries(LIVELLI).map(([k,v])=><option key={k} value={k}>{v.emoji} {v.label} — {v.skilly} Skilly/ora</option>)}
+          </select>
+        </div>
+        <div className="field"><label>Descrivi cosa insegni</label>
+          <input type="text" placeholder="Es: Matematica per liceo scientifico" value={desc} onChange={e=>setDesc(e.target.value)}/>
+        </div>
+        <div className="field"><label>📍 Dove vuoi operare?</label>
+          <select value={zona} onChange={e=>setZona(e.target.value)} style={sel}>
+            <option value="">Scegli la tua area geografica...</option>
+            {ZONE.map(z=><option key={z} value={z}>{z}</option>)}
+          </select>
+        </div>
+        {lv&&<div className="skilly-reward"><div className="skilly-reward-val">{lv.skilly}</div><div><p className="sr-label">💎 Skilly per ogni ora</p><p className="sr-desc">Guadagni {lv.skilly} Skilly ogni volta che insegni questa materia per un'ora.</p></div></div>}
+        <button className="btn" style={{marginTop:'20px'}} onClick={()=>onNext({area,livello,desc,skilly:lv?.skilly,zona})}>Completa iscrizione 🎉</button>
+        <button className="btn-outline" onClick={onBack}>← Indietro</button>
       </div>
-      <div className="field"><label>Livello</label>
-        <select value={livello} onChange={e=>setLivello(e.target.value)}>
-          <option value="">Scegli il tuo livello...</option>
-          {Object.entries(LIVELLI).map(([k,v])=><option key={k} value={k}>{v.label} — {v.skilly} Skilly/ora</option>)}
-        </select>
-      </div>
-      <div className="field"><label>Descrivi cosa insegni</label>
-        <input type="text" placeholder="Es: Matematica per liceo scientifico" value={desc} onChange={e=>setDesc(e.target.value)}/>
-      </div>
-      <div className="field"><label>Dove vuoi operare?</label>
-        <select value={zona} onChange={e=>setZona(e.target.value)}>
-          <option value="">Scegli la tua area geografica...</option>
-          {ZONE.map(z=><option key={z} value={z}>{z}</option>)}
-        </select>
-      </div>
-      {sk&&<div className="skilly-box"><div className="skilly-val">{sk}</div><div><p className="sl">Skilly per ogni ora</p><p className="sd">Guadagni {sk} Skilly ogni volta che insegni questa materia per un'ora.</p></div></div>}
-      <button className="btn" style={{marginTop:'20px'}} onClick={()=>onNext({area,livello,desc,skilly:sk,zona})}>Completa iscrizione →</button>
-      <button className="btn-outline" onClick={onBack}>← Indietro</button>
     </div>
-  </div>;
+  );
 }
+
+// ── BENVENUTO ──
 function Benvenuto({userData,competenza,onDashboard}) {
-  return <div><Topbar/>
-    <div className="content">
-      <p className="step-label">Iscrizione completata 🎉</p>
-      <h2 className="screen-title">Benvenuto in BOK, {userData?.nome||'amico'}!</h2>
-      <p className="screen-sub">Il tuo account è stato creato. La verifica identità è in corso — riceverai una email entro 24 ore.</p>
-      <div style={{background:'#EDFBF3',border:'1.5px solid #22C55E',borderRadius:'14px',padding:'14px 16px',marginBottom:'24px',display:'flex',gap:'12px',alignItems:'center'}}>
-        <span style={{fontSize:'20px'}}>✅</span>
-        <div><p style={{fontFamily:"'Syne',sans-serif",fontSize:'13px',fontWeight:'700',color:'#22C55E'}}>Identità in verifica</p><p style={{fontSize:'12px',color:'#555',marginTop:'2px'}}>Riceverai conferma entro 24 ore</p></div>
+  return (
+    <div>
+      <Topbar/>
+      <div className="content">
+        <h2 className="screen-title">Benvenuto<br/>in BOK! 🎉</h2>
+        <p className="screen-sub">Il tuo account è stato creato. La verifica identità è in corso.</p>
+        <div className="welcome-card">
+          <span style={{fontSize:'22px'}}>✅</span>
+          <div><p style={{fontFamily:"'Nunito',sans-serif",fontSize:'14px',fontWeight:'800',color:'#27AE60'}}>Identità in verifica</p><p style={{fontSize:'12px',color:'#555',marginTop:'2px'}}>Riceverai conferma via email entro 24 ore</p></div>
+        </div>
+        {competenza?.area&&<div className="comp-card" style={{marginBottom:'20px'}}>
+          <div className="comp-avatar">{LIVELLI[competenza.livello]?.emoji||'🎓'}</div>
+          <div style={{flex:1}}>
+            <p className="comp-title">{competenza.desc||'Competenza'}</p>
+            <p className="comp-sub">{competenza.area} · {LIVELLI[competenza.livello]?.label}</p>
+            {competenza.zona&&<p className="comp-zone">📍 {competenza.zona}</p>}
+          </div>
+          <div className="comp-badge">💎{competenza.skilly}<span style={{fontSize:'10px',opacity:.8}}>/h</span></div>
+        </div>}
+        <p style={{fontFamily:"'Nunito',sans-serif",fontSize:'14px',fontWeight:'800',color:'#2C3E50',marginBottom:'14px'}}>Cosa succede adesso</p>
+        {[['Aspetti la verifica identità','BOK verifica il tuo documento entro 24 ore.'],['Eroghi la tua prima lezione','Ti colleghi in videochiamata e insegni. Guadagni Skilly.'],['Usi gli Skilly per imparare','Con gli Skilly accumulati prenoti lezioni. Zero euro.']].map(([t,d],i)=>(
+          <div key={i} style={{display:'flex',gap:'12px',marginBottom:'16px',alignItems:'flex-start'}}>
+            <div className="ws-num">{i+1}</div>
+            <div><p className="ws-title">{t}</p><p className="ws-desc">{d}</p></div>
+          </div>
+        ))}
+        <button className="btn btn-green" style={{marginTop:'8px'}} onClick={onDashboard}>Vai alla dashboard →</button>
       </div>
-      {competenza?.area&&<div className="comp-card" style={{marginBottom:'24px'}}>
-        <div><p className="comp-title">{competenza.desc||'Competenza'}</p><p className="comp-area">{competenza.area} · {LIVELLI[competenza.livello]?.label}</p>{competenza.zona&&<p style={{fontSize:'11px',color:'#FF5C00',fontWeight:'600',marginTop:'2px'}}>📍 {competenza.zona}</p>}</div>
-        <div className="comp-skilly">{competenza.skilly}<span>/h</span></div>
-      </div>}
-      <p style={{fontFamily:"'Syne',sans-serif",fontSize:'13px',fontWeight:'700',color:'#1A1A1A',marginBottom:'16px'}}>Cosa succede adesso</p>
-      {[['1','Aspetti la verifica','BOK verifica il tuo documento entro 24 ore.'],['2','Eroghi la tua prima lezione','Qualcuno ti prenota. Ti colleghi in videochiamata e insegni. Guadagni Skilly.'],['3','Usi gli Skilly per imparare','Con gli Skilly accumulati prenoti lezioni da chiunque. Zero euro.']].map(([n,t,d])=>(
-        <div key={n} className="welcome-step"><div className="welcome-num">{n}</div><div><p className="wtitle">{t}</p><p className="wdesc">{d}</p></div></div>
-      ))}
-      <button className="btn btn-lime" style={{marginTop:'8px'}} onClick={onDashboard}>Vai alla dashboard →</button>
     </div>
-  </div>;
+  );
 }
+
+// ── SELEZIONE PACCHETTO ──
+function SelezionaPacchetto({maestro, onConferma, onBack}) {
+  const [selected, setSelected] = useState('singola');
+  const sk = maestro.skilly;
+  const pacchetti = {
+    singola: { label:'Sessione singola', lezioni:1, bonus_m:0, bonus_a:0, color:'selected', badge:'pb-orange', check:'pc-orange' },
+    p5: { label:'Pacchetto 5 lezioni', lezioni:5, bonus_m:15, bonus_a:8, color:'selected-green', badge:'pb-green', check:'pc-green', best:false },
+    p10: { label:'Pacchetto 10 lezioni', lezioni:10, bonus_m:40, bonus_a:20, color:'selected-purple', badge:'pb-purple', check:'pc-purple', best:true },
+  };
+  const calcSkilly = (tipo) => {
+    const p = pacchetti[tipo];
+    const base = sk * p.lezioni;
+    const mBonus = Math.round(base * p.bonus_m / 100);
+    const aBonus = Math.round(base * p.bonus_a / 100);
+    return { base, mTotal: base + mBonus, mBonus, aBonus };
+  };
+  const c = calcSkilly(selected);
+  const p = pacchetti[selected];
+  return (
+    <div style={{paddingBottom:'40px'}}>
+      <Topbar onBack={onBack}/>
+      <div style={{padding:'20px'}}>
+        <div className="step-pill">📦 Tipo di prenotazione</div>
+        <h2 className="screen-title" style={{fontSize:'24px'}}>Scegli il<br/>pacchetto</h2>
+        <p className="screen-sub">Il pacchetto da 10 lezioni conviene sempre di più — per te e per il Maestro.</p>
+        <div className="pack-cards">
+          {Object.entries(pacchetti).map(([key,pack])=>{
+            const calc = calcSkilly(key);
+            const isSel = selected===key;
+            return (
+              <div key={key} className={`pack-card ${isSel?pack.color:''}`} onClick={()=>setSelected(key)}>
+                {pack.best&&<div className="pack-best">⭐ Più conveniente</div>}
+                {isSel&&<div className={`pack-check ${pack.check}`}>✓</div>}
+                <div className="pack-header">
+                  <p className="pack-name">{pack.label}</p>
+                  <span className={`pack-badge ${pack.badge}`}>{pack.lezioni} {pack.lezioni===1?'lezione':'lezioni'}</span>
+                </div>
+                <div className="pack-price">
+                  <span className="pack-skilly">💎{calc.mTotal}</span>
+                  <span className="pack-unit">Skilly al Maestro</span>
+                </div>
+                {pack.bonus_m>0&&<p className="pack-bonus">🎁 +{pack.bonus_m}% bonus completamento Maestro · +{pack.bonus_a}% bonus Allievo</p>}
+                {key==='singola'&&<p className="pack-desc">Pagamento singolo. Nessun bonus.</p>}
+                {key==='p5'&&<p className="pack-desc">5 lezioni concordate. Pagamento lezione per lezione. Bonus al completamento.</p>}
+                {key==='p10'&&<p className="pack-desc">10 lezioni concordate. Il massimo del valore per entrambi. Bonus doppio.</p>}
+              </div>
+            );
+          })}
+        </div>
+        <div className="pack-summary">
+          <p className="ps-title">💜 Riepilogo {p.label}</p>
+          <div className="ps-row"><span>Skilly base ({p.lezioni} × {sk})</span><span className="ps-val">💎{c.base}</span></div>
+          {c.mBonus>0&&<div className="ps-row"><span>Bonus Maestro (+{p.bonus_m}%)</span><span className="ps-val green">+{c.mBonus}</span></div>}
+          {c.aBonus>0&&<div className="ps-row"><span>Bonus Allievo al completamento</span><span className="ps-val orange">💎+{c.aBonus}</span></div>}
+          <div className="ps-row total"><span>Totale al Maestro</span><span className="ps-val">💎{c.mTotal}</span></div>
+          {c.aBonus>0&&<p style={{fontSize:'11px',color:'#9B59B6',fontWeight:'600',marginTop:'8px'}}>🎁 Tu ricevi 💎+{c.aBonus} Skilly quando completi tutte le {p.lezioni} lezioni!</p>}
+        </div>
+        <button className="btn" onClick={()=>onConferma(selected, c)}>Continua con {p.label} →</button>
+        <button className="btn-outline" onClick={onBack}>← Indietro</button>
+      </div>
+    </div>
+  );
+}
+
+// ── PRENOTAZIONE ──
+function Prenotazione({maestro,wallet,tipoPacchetto,calcoloSkilly,onBack,onConferma}) {
+  const [giorno,setGiorno]=useState('');
+  const [orario,setOrario]=useState('');
+  const [forWho,setForWho]=useState('me');
+  const [durata,setDurata]=useState('60');
+  const pacchetti={'singola':'Sessione singola','p5':'Pacchetto 5 lezioni','p10':'Pacchetto 10 lezioni'};
+  const costoPerLez=Math.round(maestro.skilly*parseInt(durata)/60);
+  const costoTotale=tipoPacchetto==='singola'?costoPerLez:calcoloSkilly.mTotal;
+  const ok=wallet>=costoTotale;
+  const sel={width:'100%',background:'#F8F9FA',border:'2px solid #ECF0F1',color:'#2C3E50',fontFamily:"'Inter',sans-serif",fontSize:'15px',padding:'13px 16px',outline:'none',borderRadius:'14px',boxSizing:'border-box',appearance:'none'};
+  return (
+    <div style={{paddingBottom:'40px'}}>
+      <Topbar onBack={onBack}/>
+      <div style={{padding:'20px'}}>
+        <div className="step-pill">📅 Prenotazione</div>
+        <h2 className="screen-title" style={{fontSize:'22px'}}>Prenota con<br/>{maestro.nome}</h2>
+        <div className="pren-mc">
+          <div className="pren-av" style={{background:GRADIENTS[(maestro.id-1)%GRADIENTS.length]}}>{maestro.nome.split(' ').map(n=>n[0]).join('')}</div>
+          <div>
+            <p style={{fontFamily:"'Nunito',sans-serif",fontSize:'14px',fontWeight:'800',color:'#2C3E50'}}>{maestro.emoji} {maestro.nome}</p>
+            <p style={{fontSize:'11px',color:'#7F8C8D',marginBottom:'2px'}}>{maestro.area}</p>
+            <p style={{fontSize:'10px',color:'#FF6B35',fontWeight:'700'}}>📍 {maestro.zona}</p>
+          </div>
+          <div style={{marginLeft:'auto',textAlign:'right'}}>
+            <p style={{fontFamily:"'Nunito',sans-serif",fontSize:'12px',fontWeight:'800',color:'#9B59B6'}}>{pacchetti[tipoPacchetto]}</p>
+          </div>
+        </div>
+        <div className="field"><label>📅 Prima lezione — giorno</label><input type="date" value={giorno} onChange={e=>setGiorno(e.target.value)} style={sel}/></div>
+        <div className="field"><label>🕐 Orario</label>
+          <select value={orario} onChange={e=>setOrario(e.target.value)} style={sel}>
+            <option value="">Scegli orario...</option>
+            {['09:00','10:00','11:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00'].map(h=><option key={h}>{h}</option>)}
+          </select>
+        </div>
+        <div className="field"><label>⏱️ Durata ogni lezione</label>
+          <select value={durata} onChange={e=>setDurata(e.target.value)} style={sel}>
+            <option value="30">30 minuti</option><option value="60">1 ora</option><option value="90">1 ora e 30</option><option value="120">2 ore</option>
+          </select>
+        </div>
+        <div className="field"><label>👤 La sessione è per</label>
+          <select value={forWho} onChange={e=>setForWho(e.target.value)} style={sel}>
+            <option value="me">Me stesso</option><option value="b1">Beneficiario 1</option><option value="b2">Beneficiario 2</option><option value="b3">Beneficiario 3</option>
+          </select>
+        </div>
+        <div className="riepilogo">
+          <div className="rie-row"><span>Maestro</span><span style={{fontWeight:'700',color:'#2C3E50'}}>{maestro.nome}</span></div>
+          <div className="rie-row"><span>Tipo</span><span style={{fontWeight:'700',color:'#2C3E50'}}>{pacchetti[tipoPacchetto]}</span></div>
+          {tipoPacchetto!=='singola'&&<div className="rie-row"><span>Pagamento</span><span style={{fontWeight:'600',color:'#27AE60',fontSize:'12px'}}>Lezione per lezione ✓</span></div>}
+          {tipoPacchetto!=='singola'&&calcoloSkilly.aBonus>0&&<div className="rie-row"><span>Bonus Allievo</span><span style={{fontWeight:'700',color:'#9B59B6'}}>💎+{calcoloSkilly.aBonus} al completamento</span></div>}
+          <div className="rie-row"><span>Il tuo wallet</span><span className="rie-val" style={{color:ok?'#9B59B6':'#E74C3C'}}>💎{wallet}</span></div>
+          <div className="rie-row"><span>Costo {tipoPacchetto==='singola'?'sessione':'prima lezione'}</span><span className="rie-val">💎{tipoPacchetto==='singola'?costoPerLez:Math.round(maestro.skilly*parseInt(durata)/60)}</span></div>
+        </div>
+        {!ok&&<p style={{fontSize:'13px',color:'#E74C3C',fontWeight:'700',marginBottom:'12px',textAlign:'center'}}>⚠️ Skilly insufficienti. Eroga prima altre sessioni come Maestro.</p>}
+        <button onClick={()=>ok&&giorno&&orario&&onConferma({maestro,giorno,orario,durata,forWho,tipoPacchetto,calcoloSkilly,costo:tipoPacchetto==='singola'?costoPerLez:Math.round(maestro.skilly*parseInt(durata)/60)})} style={{width:'100%',background:ok?'linear-gradient(135deg,#FF6B35,#FF8C42)':'#ECF0F1',color:ok?'#fff':'#BDC3C7',fontFamily:"'Nunito',sans-serif",fontSize:'16px',fontWeight:'800',padding:'16px',border:'none',cursor:ok?'pointer':'not-allowed',borderRadius:'16px',display:'block',marginTop:'8px',boxShadow:ok?'0 4px 14px rgba(255,107,53,0.35)':'none'}}>
+          Conferma prenotazione →
+        </button>
+        <button className="btn-outline" onClick={onBack}>← Indietro</button>
+      </div>
+    </div>
+  );
+}
+
+// ── CONFERMA ──
+function ConfermaSessione({prenotazione,onHome}) {
+  const pack={'singola':'Sessione singola','p5':'Pacchetto 5 lezioni','p10':'Pacchetto 10 lezioni'};
+  return (
+    <div className="conferma">
+      <div className="conf-circle">✓</div>
+      <h2 style={{fontFamily:"'Nunito',sans-serif",fontSize:'28px',fontWeight:'900',color:'#2C3E50',marginBottom:'12px',lineHeight:'1.2'}}>Prenotato! 🎉</h2>
+      <p style={{fontSize:'14px',color:'#7F8C8D',lineHeight:'1.6',marginBottom:'20px'}}>Hai prenotato <strong>{pack[prenotazione.tipoPacchetto]}</strong> con <strong>{prenotazione.maestro.nome}</strong>.<br/>Prima lezione il <strong>{prenotazione.giorno}</strong> alle <strong>{prenotazione.orario}</strong>. Riceverai il link per la videochiamata via email.</p>
+      <div className="skilly-chip">
+        <span className="sc-val">💎-{prenotazione.costo}</span>
+        <div><p style={{fontSize:'10px',fontWeight:'700',textTransform:'uppercase',letterSpacing:'0.1em',color:'#8E44AD'}}>Prima lezione</p><p style={{fontSize:'12px',color:'#7F8C8D',marginTop:'2px'}}>paghi lezione per lezione</p></div>
+      </div>
+      {prenotazione.tipoPacchetto!=='singola'&&prenotazione.calcoloSkilly.aBonus>0&&(
+        <div style={{background:'#EAFAF1',border:'2px solid #A9DFBF',borderRadius:'16px',padding:'14px',marginBottom:'20px',textAlign:'center'}}>
+          <p style={{fontFamily:"'Nunito',sans-serif",fontSize:'14px',fontWeight:'800',color:'#27AE60'}}>🎁 Completa tutte le lezioni e ricevi</p>
+          <p style={{fontFamily:"'Nunito',sans-serif",fontSize:'28px',fontWeight:'900',color:'#27AE60'}}>💎+{prenotazione.calcoloSkilly.aBonus} Skilly</p>
+          <p style={{fontSize:'11px',color:'#7F8C8D',marginTop:'2px'}}>Bonus fedeltà per il completamento del pacchetto</p>
+        </div>
+      )}
+      <button className="btn" onClick={onHome}>Torna alla home →</button>
+    </div>
+  );
+}
+
+// ── CATALOGO ──
 function Catalogo({wallet,sessioniErogate,onPrenota}) {
   const [search,setSearch]=useState('');
   const [fArea,setFArea]=useState('');
@@ -303,281 +651,308 @@ function Catalogo({wallet,sessioniErogate,onPrenota}) {
     const s=search.toLowerCase();
     return (m.nome.toLowerCase().includes(s)||m.area.toLowerCase().includes(s)||m.desc.toLowerCase().includes(s))&&(!fArea||m.macro===fArea)&&(!fZona||m.zona===fZona||m.zona==='Tutta Italia');
   });
-  return <div style={{paddingBottom:'80px'}}>
-    <div style={{background:'var(--surface)',padding:'16px 20px',borderBottom:'1px solid var(--border)'}}>
-      <p style={{fontFamily:"'Syne',sans-serif",fontSize:'16px',fontWeight:'800',color:'var(--text)',marginBottom:'14px'}}>Catalogo Maestri 🔍</p>
-      <input className="search-bar" type="text" placeholder="🔍  Cerca materia o Maestro..." value={search} onChange={e=>setSearch(e.target.value)}/>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px',marginTop:'8px'}}>
-        <select className="filter-sel" value={fArea} onChange={e=>setFArea(e.target.value)}>
-          <option value="">Tutte le aree</option>
-          {['istruzione','lingue','informatica','giuridico','salute','arte','musica','business'].map(a=><option key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</option>)}
-        </select>
-        <select className="filter-sel" value={fZona} onChange={e=>setFZona(e.target.value)}>
-          <option value="">Tutta Italia</option>
-          {ZONE.slice(1).map(z=><option key={z} value={z}>{z}</option>)}
-        </select>
+  const sel={background:'#F8F9FA',border:'2px solid #ECF0F1',color:'#2C3E50',fontFamily:"'Inter',sans-serif",fontSize:'13px',padding:'9px 12px',borderRadius:'12px',width:'100%',outline:'none',appearance:'none',cursor:'pointer'};
+  return (
+    <div style={{paddingBottom:'80px'}}>
+      <div className="cat-header">
+        <p className="cat-title">🔍 Catalogo Maestri</p>
+        <div className="search-wrap">
+          <span className="search-icon">🔍</span>
+          <input className="search-input" type="text" placeholder="Cerca materia o Maestro..." value={search} onChange={e=>setSearch(e.target.value)}/>
+        </div>
+        <div className="filters">
+          <select style={sel} value={fArea} onChange={e=>setFArea(e.target.value)}>
+            <option value="">Tutte le aree</option>
+            {AREE.map(a=><option key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</option>)}
+          </select>
+          <select style={sel} value={fZona} onChange={e=>setFZona(e.target.value)}>
+            <option value="">📍 Tutta Italia</option>
+            {ZONE.slice(1).map(z=><option key={z} value={z}>{z}</option>)}
+          </select>
+        </div>
       </div>
-    </div>
-    {bloccato&&<div className="blocco-banner">
-      <span style={{fontSize:'20px'}}>🔒</span>
-      <div><p style={{fontFamily:"'Syne',sans-serif",fontSize:'13px',fontWeight:'700',color:'var(--orange)',marginBottom:'3px'}}>Prima eroga, poi ricevi</p><p style={{fontSize:'12px',color:'#555',lineHeight:'1.5'}}>Eroga almeno una sessione come Maestro per sbloccare il catalogo Allievo.</p></div>
-    </div>}
-    <div style={{padding:'12px 20px 0'}}>
-      <p style={{fontSize:'12px',color:'var(--text-3)',marginBottom:'14px',fontWeight:'500'}}>{filtered.length} Maestri disponibili</p>
-      {filtered.map(m=>(
-        <div key={m.id} className="maestro-card">
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'10px'}}>
-            <div style={{display:'flex',gap:'12px',alignItems:'center'}}>
-              <div className="maestro-avatar">{m.nome.split(' ').map(n=>n[0]).join('')}</div>
-              <div>
-                <p style={{fontFamily:"'Syne',sans-serif",fontSize:'14px',fontWeight:'700',color:'var(--text)'}}>{m.nome}</p>
-                <p style={{fontSize:'11px',color:'var(--text-3)'}}>{m.sessioni} sessioni · <Stars val={m.media}/></p>
+      {bloccato&&<div className="blocco-alert"><span style={{fontSize:'22px'}}>🔒</span><div><p style={{fontFamily:"'Nunito',sans-serif",fontSize:'14px',fontWeight:'800',color:'#FF6B35',marginBottom:'3px'}}>Prima eroga, poi ricevi</p><p style={{fontSize:'12px',color:'#555',lineHeight:'1.5'}}>Eroga almeno una sessione come Maestro per sbloccare il catalogo Allievo.</p></div></div>}
+      <div style={{padding:'12px 16px 0'}}>
+        <p style={{fontSize:'12px',color:'#7F8C8D',marginBottom:'14px',fontWeight:'600'}}>{filtered.length} Maestri trovati</p>
+        {filtered.map(m=>(
+          <div key={m.id} className="maestro-card">
+            <div className="mc-photo" style={{background:GRADIENTS[(m.id-1)%GRADIENTS.length]}}>
+              <div className="mc-initials">{m.nome.split(' ').map(n=>n[0]).join('')}</div>
+              <div className="mc-skilly"><span className="mcs-val">💎{m.skilly}</span><span className="mcs-lbl">/ora</span></div>
+            </div>
+            <div className="mc-body">
+              <p className="mc-name">{m.emoji} {m.nome}</p>
+              <p className="mc-area">{m.area}</p>
+              <p className="mc-desc">{m.desc}</p>
+              <div className="mc-meta">
+                <span className="meta-chip"><Stars val={m.media}/></span>
+                <span className="meta-chip">{m.sessioni} sessioni</span>
+                <span className="meta-chip zona">📍 {m.zona}</span>
               </div>
-            </div>
-            <div style={{textAlign:'right'}}>
-              <p style={{fontFamily:"'Syne',sans-serif",fontSize:'22px',fontWeight:'800',color:'var(--purple)',lineHeight:'1'}}>{m.skilly}</p>
-              <p style={{fontSize:'9px',color:'var(--text-3)',fontFamily:"'Inter',sans-serif"}}>Skilly/ora</p>
+              {bloccato
+                ?<div className="blocco-btn">🔒 Eroga prima una sessione</div>
+                :<button className="prenota-btn" onClick={()=>onPrenota(m)}>Prenota sessione →</button>
+              }
             </div>
           </div>
-          <p style={{fontSize:'12px',color:'var(--text-2)',lineHeight:'1.5',margin:'0 0 10px'}}>{m.desc}</p>
-          <div style={{display:'flex',gap:'6px',marginBottom:'12px',flexWrap:'wrap'}}>
-            <span className="tag orange">{m.area}</span>
-            <span className="tag">📍 {m.zona}</span>
-          </div>
-          {bloccato
-            ?<div style={{background:'#FFF3ED',border:'1px solid #FF5C00',borderRadius:'8px',padding:'8px 12px',fontSize:'11px',color:'#FF5C00',fontWeight:'600',textAlign:'center'}}>🔒 Eroga prima una sessione per sbloccare</div>
-            :<button onClick={()=>onPrenota(m)} style={{width:'100%',background:'#FF5C00',color:'#fff',border:'none',padding:'11px',fontFamily:"'Syne',sans-serif",fontSize:'13px',fontWeight:'700',cursor:'pointer',borderRadius:'10px'}}>Prenota sessione →</button>
-          }
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
-  </div>;
+  );
 }
-function Prenotazione({maestro,wallet,onBack,onConferma}) {
-  const [giorno,setGiorno]=useState('');
-  const [orario,setOrario]=useState('');
-  const [forWho,setForWho]=useState('me');
-  const [durata,setDurata]=useState('60');
-  const costo=Math.round(maestro.skilly*parseInt(durata)/60);
-  const ok=wallet>=costo;
-  const selStyle={width:'100%',background:'var(--surface)',border:'1.5px solid var(--border)',color:'var(--text)',fontFamily:"'Inter',sans-serif",fontSize:'15px',padding:'13px 16px',outline:'none',appearance:'none',borderRadius:'12px',boxSizing:'border-box'};
-  return <div style={{paddingBottom:'40px'}}>
-    <Topbar onBack={onBack}/>
-    <div style={{padding:'20px'}}>
-      <p className="step-label">Prenotazione</p>
-      <h2 className="screen-title" style={{fontSize:'22px'}}>Prenota con {maestro.nome}</h2>
-      <div style={{display:'flex',gap:'12px',alignItems:'center',background:'var(--surface)',border:'1.5px solid var(--border)',padding:'14px',borderRadius:'14px',marginBottom:'20px'}}>
-        <div className="maestro-avatar">{maestro.nome.split(' ').map(n=>n[0]).join('')}</div>
-        <div>
-          <p style={{fontFamily:"'Syne',sans-serif",fontSize:'14px',fontWeight:'700',color:'var(--text)'}}>{maestro.nome}</p>
-          <p style={{fontSize:'12px',color:'var(--text-3)'}}>{maestro.area} · <Stars val={maestro.media}/></p>
-          <p style={{fontSize:'11px',color:'#FF5C00',fontWeight:'600',marginTop:'2px'}}>📍 {maestro.zona}</p>
-        </div>
-      </div>
-      <div className="field"><label>Giorno</label><input type="date" value={giorno} onChange={e=>setGiorno(e.target.value)} style={{...selStyle}}/></div>
-      <div className="field"><label>Orario</label>
-        <select value={orario} onChange={e=>setOrario(e.target.value)} style={selStyle}>
-          <option value="">Scegli orario...</option>
-          {['09:00','10:00','11:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00'].map(h=><option key={h}>{h}</option>)}
-        </select>
-      </div>
-      <div className="field"><label>Durata</label>
-        <select value={durata} onChange={e=>setDurata(e.target.value)} style={selStyle}>
-          <option value="30">30 minuti</option><option value="60">1 ora</option><option value="90">1 ora e 30</option><option value="120">2 ore</option>
-        </select>
-      </div>
-      <div className="field"><label>La sessione è per</label>
-        <select value={forWho} onChange={e=>setForWho(e.target.value)} style={selStyle}>
-          <option value="me">Me stesso</option><option value="b1">Beneficiario 1</option><option value="b2">Beneficiario 2</option><option value="b3">Beneficiario 3</option>
-        </select>
-      </div>
-      <div className="riepilogo-box">
-        <div className="riepilogo-row"><span>Maestro</span><span style={{fontWeight:'600',color:'var(--text)'}}>{maestro.nome}</span></div>
-        <div className="riepilogo-row"><span>Durata</span><span style={{fontWeight:'600',color:'var(--text)'}}>{durata} min</span></div>
-        <div className="riepilogo-row"><span>Wallet attuale</span><span style={{fontFamily:"'Syne',sans-serif",fontSize:'18px',fontWeight:'800',color:ok?'var(--purple)':'var(--red)'}}>{wallet} Skilly</span></div>
-        <div className="riepilogo-row"><span>Costo sessione</span><span style={{fontFamily:"'Syne',sans-serif",fontSize:'18px',fontWeight:'800',color:'var(--purple)'}}>{costo} Skilly</span></div>
-      </div>
-      {!ok&&<p style={{fontSize:'12px',color:'var(--red)',fontWeight:'600',marginBottom:'12px',textAlign:'center'}}>⚠️ Skilly insufficienti. Eroga prima altre sessioni.</p>}
-      <button onClick={()=>ok&&giorno&&orario&&onConferma({maestro,giorno,orario,durata,forWho,costo})} style={{width:'100%',background:ok?'#FF5C00':'#E0E0E0',color:ok?'#fff':'#999',fontFamily:"'Syne',sans-serif",fontSize:'14px',fontWeight:'700',padding:'16px',border:'none',cursor:ok?'pointer':'not-allowed',borderRadius:'12px',display:'block'}}>
-        Conferma prenotazione →
-      </button>
-      <button className="btn-outline" onClick={onBack}>← Indietro</button>
-    </div>
-  </div>;
-}
-function ConfermaSessione({prenotazione,onHome}) {
-  return <div className="conferma-screen">
-    <div className="conferma-icon">✓</div>
-    <h2 style={{fontFamily:"'Syne',sans-serif",fontSize:'28px',fontWeight:'800',color:'var(--text)',marginBottom:'12px',lineHeight:'1.2'}}>Sessione<br/>prenotata! 🎉</h2>
-    <p style={{fontSize:'14px',color:'var(--text-2)',lineHeight:'1.6',marginBottom:'24px'}}>Hai prenotato con <strong>{prenotazione.maestro.nome}</strong> il <strong>{prenotazione.giorno}</strong> alle <strong>{prenotazione.orario}</strong>. Riceverai il link per la videochiamata via email.</p>
-    <div style={{display:'inline-flex',alignItems:'center',gap:'10px',background:'var(--purple-bg)',border:'1.5px solid var(--purple-light)',padding:'14px 24px',borderRadius:'16px',marginBottom:'28px'}}>
-      <span style={{fontFamily:"'Syne',sans-serif",fontSize:'36px',fontWeight:'800',color:'var(--purple)'}}>-{prenotazione.costo}</span>
-      <div><p style={{fontSize:'10px',fontWeight:'700',textTransform:'uppercase',letterSpacing:'0.1em',color:'var(--purple-light)'}}>Skilly scalati</p><p style={{fontSize:'12px',color:'var(--text-2)',marginTop:'2px'}}>dal tuo wallet</p></div>
-    </div>
-    <button className="btn" onClick={onHome}>Torna alla home →</button>
-  </div>;
-}
+
+// ── SESSIONI ──
 function Sessioni({competenza}) {
-  const [tab,setTab]=useState('ricevute');
-  return <div style={{padding:'20px 20px 80px'}}>
-    <p className="section-title">Le tue sessioni</p>
-    <div style={{display:'flex',gap:'8px',marginBottom:'20px'}}>
-      {[['ricevute','🎓 Da Maestro'],['prenotate','📚 Da Allievo']].map(([id,label])=>(
-        <button key={id} onClick={()=>setTab(id)} style={{flex:1,padding:'10px',fontFamily:"'Syne',sans-serif",fontSize:'12px',fontWeight:'700',border:'1.5px solid',borderColor:tab===id?(id==='ricevute'?'var(--lime)':'var(--orange)'):'var(--border)',background:tab===id?(id==='ricevute'?'var(--lime-bg)':'var(--orange-bg)'):'var(--surface)',color:tab===id?(id==='ricevute'?'var(--lime)':'var(--orange)'):'var(--text-3)',borderRadius:'10px',cursor:'pointer'}}>{label}</button>
-      ))}
+  const [tab,setTab]=useState('m');
+  return (
+    <div style={{paddingBottom:'80px'}}>
+      <div className="tab-bar">
+        <button className={`tab-btn ${tab==='m'?'am':''}`} onClick={()=>setTab('m')}>🎓 Da Maestro</button>
+        <button className={`tab-btn ${tab==='a'?'aa':''}`} onClick={()=>setTab('a')}>📚 Da Allievo</button>
+      </div>
+      <div style={{padding:'16px 16px 0'}}>
+        {tab==='m'&&<>
+          <div className="sess-card">
+            <div className="sess-status s-attesa">⏳ In attesa</div>
+            <p style={{fontFamily:"'Nunito',sans-serif",fontSize:'15px',fontWeight:'800',color:'#2C3E50',marginBottom:'3px'}}>📐 Matematica — Analisi</p>
+            <p style={{fontSize:'12px',color:'#7F8C8D',marginBottom:'6px'}}>Luca M. · 25 apr 2026 · 15:00 · 1 ora</p>
+            <p style={{fontSize:'12px',color:'#9B59B6',fontWeight:'700',marginBottom:'12px'}}>💎 +{competenza?.skilly||8} Skilly al completamento</p>
+            <button className="avvia-btn">🎥 Avvia videochiamata</button>
+          </div>
+          <div className="sess-card">
+            <div className="sess-status s-completata">✓ Completata</div>
+            <p style={{fontFamily:"'Nunito',sans-serif",fontSize:'15px',fontWeight:'800',color:'#2C3E50',marginBottom:'3px'}}>📐 Matematica — Algebra</p>
+            <p style={{fontSize:'12px',color:'#7F8C8D',marginBottom:'4px'}}>Federica R. · 18 apr 2026 · 17:00 · 1 ora</p>
+            <p style={{fontSize:'12px',color:'#27AE60',fontWeight:'700'}}>💎 +{competenza?.skilly||8} Skilly guadagnati ✓</p>
+          </div>
+        </>}
+        {tab==='a'&&<div className="empty-state"><div className="empty-emoji">📚</div><p className="empty-title">Nessuna sessione da Allievo</p><p className="empty-desc">Accumula Skilly come Maestro, poi vai nel catalogo e prenota la tua prima lezione.</p></div>}
+      </div>
     </div>
-    {tab==='ricevute'&&<div>
-      <div className="sessione-card">
-        <div className="sess-badge" style={{background:'#FEF3C7',color:'#D97706'}}>⏳ In attesa</div>
-        <p style={{fontFamily:"'Syne',sans-serif",fontSize:'14px',fontWeight:'700',color:'var(--text)',marginBottom:'4px'}}>Matematica — Analisi</p>
-        <p style={{fontSize:'12px',color:'var(--text-3)',marginBottom:'12px'}}>Luca M. · 25 apr 2026 · 15:00 · 1 ora</p>
-        <button style={{width:'100%',background:'var(--lime)',color:'#fff',fontFamily:"'Syne',sans-serif",fontSize:'13px',fontWeight:'700',padding:'12px',border:'none',borderRadius:'10px',cursor:'pointer'}}>🎥 Avvia videochiamata</button>
-      </div>
-      <div className="sessione-card">
-        <div className="sess-badge" style={{background:'var(--lime-bg)',color:'var(--lime)'}}>✓ Completata</div>
-        <p style={{fontFamily:"'Syne',sans-serif",fontSize:'14px',fontWeight:'700',color:'var(--text)',marginBottom:'4px'}}>Matematica — Algebra</p>
-        <p style={{fontSize:'12px',color:'var(--text-3)',marginBottom:'4px'}}>Federica R. · 18 apr 2026 · 17:00 · 1 ora</p>
-        <p style={{fontSize:'12px',color:'var(--purple)',fontWeight:'600'}}>+{competenza?.skilly||8} Skilly guadagnati ✓</p>
-      </div>
-    </div>}
-    {tab==='prenotate'&&<div className="empty-state">
-      <div className="empty-icon">📚</div>
-      <p className="empty-title">Nessuna sessione da Allievo</p>
-      <p className="empty-desc">Accumula Skilly come Maestro, poi vai nel catalogo e prenota la tua prima lezione.</p>
-    </div>}
-  </div>;
+  );
 }
+
+// ── PROFILO ──
 function Profilo({userData,competenza,onUpdate}) {
   const [editing,setEditing]=useState(false);
   const [form,setForm]=useState({nome:userData?.nome||'Paolo',cognome:userData?.cognome||'Galli',citta:userData?.citta||'Spoleto',zona:competenza?.zona||'Tutta Italia',bio:''});
+  const [competenze,setCompetenze]=useState(competenza?.area?[competenza]:[]);
+  const [nuovaComp,setNuovaComp]=useState({area:'',livello:'',desc:'',zona:''});
   const s=(k,v)=>setForm(p=>({...p,[k]:v}));
-  const selStyle={width:'100%',background:'var(--surface)',border:'1.5px solid var(--border)',color:'var(--text)',fontFamily:"'Inter',sans-serif",fontSize:'15px',padding:'13px 16px',outline:'none',appearance:'none',borderRadius:'12px',boxSizing:'border-box'};
-  if(editing) return <div style={{paddingBottom:'80px'}}>
-    <Topbar onBack={()=>setEditing(false)}/>
-    <div className="content">
-      <p className="step-label">Modifica profilo</p>
-      <h2 className="screen-title" style={{fontSize:'22px'}}>I tuoi dati</h2>
-      <div className="row2">
-        <div className="field"><label>Nome</label><input value={form.nome} onChange={e=>s('nome',e.target.value)}/></div>
-        <div className="field"><label>Cognome</label><input value={form.cognome} onChange={e=>s('cognome',e.target.value)}/></div>
-      </div>
-      <div className="field"><label>Città</label><input value={form.citta} onChange={e=>s('citta',e.target.value)}/></div>
-      <div className="field"><label>Dove vuoi operare come Maestro?</label>
-        <select value={form.zona} onChange={e=>s('zona',e.target.value)} style={selStyle}>
-          {ZONE.map(z=><option key={z} value={z}>{z}</option>)}
-        </select>
-      </div>
-      <div className="field"><label>Bio (opzionale)</label><textarea value={form.bio} onChange={e=>s('bio',e.target.value)} placeholder="Presentati brevemente..." rows={3} style={{resize:'vertical'}}/></div>
-      <button className="btn" onClick={()=>{onUpdate(form);setEditing(false);}}>Salva modifiche →</button>
-      <button className="btn-outline" onClick={()=>setEditing(false)}>Annulla</button>
-    </div>
-  </div>;
-  return <div style={{paddingBottom:'80px'}}>
-    <div className="profilo-header">
-      <div className="profilo-avatar">{(form.nome[0]||'P')+(form.cognome[0]||'G')}</div>
-      <p style={{fontFamily:"'Syne',sans-serif",fontSize:'20px',fontWeight:'800',color:'#fff',marginBottom:'4px'}}>{form.nome} {form.cognome}</p>
-      <p style={{fontSize:'12px',color:'rgba(255,255,255,0.7)'}}>📍 {form.citta}</p>
-    </div>
-    <div style={{padding:'20px 20px 20px'}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'12px'}}>
-        <p className="section-title" style={{margin:0}}>Dati personali</p>
-        <button className="edit-chip" onClick={()=>setEditing(true)}>Modifica</button>
-      </div>
-      {[['Nome',`${form.nome} ${form.cognome}`],['Città',form.citta],['Area operativa',`📍 ${form.zona}`]].map(([l,v])=>(
-        <div key={l} className="profilo-field"><div><p className="profilo-field-label">{l}</p><p className="profilo-field-val">{v}</p></div></div>
-      ))}
-      {form.bio&&<div className="profilo-field"><div><p className="profilo-field-label">Bio</p><p className="profilo-field-val">{form.bio}</p></div></div>}
-      <p className="section-title" style={{marginTop:'24px'}}>Le mie competenze</p>
-      {competenza?.area?<div className="comp-card">
-        <div><p className="comp-title">{competenza.desc||'Competenza'}</p><p className="comp-area">{competenza.area} · {LIVELLI[competenza.livello]?.label}</p>{competenza.zona&&<p style={{fontSize:'11px',color:'#FF5C00',fontWeight:'600',marginTop:'2px'}}>📍 {competenza.zona||form.zona}</p>}</div>
-        <div className="comp-skilly">{competenza.skilly}<span>/h</span></div>
-      </div>:<p style={{fontSize:'13px',color:'var(--text-3)'}}>Nessuna competenza ancora.</p>}
-      <button className="btn-outline" style={{marginTop:'8px'}}>+ Aggiungi competenza</button>
-      <p className="section-title" style={{marginTop:'24px'}}>Reputazione</p>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
-        <div style={{background:'var(--orange-bg)',border:'1.5px solid var(--orange)',borderRadius:'14px',padding:'14px',textAlign:'center'}}>
-          <p style={{fontFamily:"'Syne',sans-serif",fontSize:'28px',fontWeight:'800',color:'var(--orange)'}}>1</p>
-          <p style={{fontSize:'10px',fontWeight:'700',textTransform:'uppercase',letterSpacing:'0.1em',color:'var(--orange)',marginTop:'2px'}}>Sessioni erogate</p>
+  const sn=(k,v)=>setNuovaComp(p=>({...p,[k]:v}));
+  const sel={width:'100%',background:'#F8F9FA',border:'2px solid #ECF0F1',color:'#2C3E50',fontFamily:"'Inter',sans-serif",fontSize:'15px',padding:'13px 16px',outline:'none',borderRadius:'14px',boxSizing:'border-box',appearance:'none'};
+  const lvNuova=nuovaComp.livello?LIVELLI[nuovaComp.livello]:null;
+
+  if(editing==='comp') return(
+    <div style={{paddingBottom:'80px'}}>
+      <Topbar onBack={()=>setEditing(false)}/>
+      <div className="content">
+        <div className="step-pill">🎓 Nuova competenza</div>
+        <h2 className="screen-title" style={{fontSize:'24px'}}>Aggiungi<br/>competenza</h2>
+        <p className="screen-sub">Ogni competenza aggiuntiva ti permette di guadagnare più Skilly e raggiungere più Allievi.</p>
+        <div className="field"><label>Area di competenza</label>
+          <select value={nuovaComp.area} onChange={e=>sn('area',e.target.value)} style={sel}>
+            <option value="">Scegli un'area...</option>
+            {AREE.map(a=><option key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</option>)}
+          </select>
         </div>
-        <div style={{background:'var(--purple-bg)',border:'1.5px solid var(--purple-light)',borderRadius:'14px',padding:'14px',textAlign:'center'}}>
-          <p style={{fontFamily:"'Syne',sans-serif",fontSize:'28px',fontWeight:'800',color:'var(--purple)'}}>9.4</p>
-          <p style={{fontSize:'10px',fontWeight:'700',textTransform:'uppercase',letterSpacing:'0.1em',color:'var(--purple-light)',marginTop:'2px'}}>Media valutazione</p>
+        <div className="field"><label>Livello</label>
+          <select value={nuovaComp.livello} onChange={e=>sn('livello',e.target.value)} style={sel}>
+            <option value="">Scegli il tuo livello...</option>
+            {Object.entries(LIVELLI).map(([k,v])=><option key={k} value={k}>{v.emoji} {v.label} — {v.skilly} Skilly/ora</option>)}
+          </select>
+        </div>
+        <div className="field"><label>Descrivi cosa insegni</label>
+          <input type="text" placeholder="Es: Chitarra classica, tecnica e solfeggio" value={nuovaComp.desc} onChange={e=>sn('desc',e.target.value)}/>
+        </div>
+        <div className="field"><label>📍 Dove vuoi operare?</label>
+          <select value={nuovaComp.zona} onChange={e=>sn('zona',e.target.value)} style={sel}>
+            <option value="">Scegli la tua area geografica...</option>
+            {ZONE.map(z=><option key={z} value={z}>{z}</option>)}
+          </select>
+        </div>
+        {lvNuova&&<div className="skilly-reward"><div className="skilly-reward-val">{lvNuova.skilly}</div><div><p className="sr-label">💎 Skilly per ogni ora</p><p className="sr-desc">Guadagni {lvNuova.skilly} Skilly ogni volta che insegni questa materia per un'ora.</p></div></div>}
+        <button className="btn" style={{marginTop:'20px'}} onClick={()=>{
+          if(nuovaComp.area&&nuovaComp.livello&&nuovaComp.desc){
+            setCompetenze(prev=>[...prev,{...nuovaComp,skilly:lvNuova?.skilly}]);
+            setNuovaComp({area:'',livello:'',desc:'',zona:''});
+            setEditing(false);
+          }
+        }}>Salva competenza →</button>
+        <button className="btn-outline" onClick={()=>setEditing(false)}>Annulla</button>
+      </div>
+    </div>
+  );
+  if(editing) return(
+    <div style={{paddingBottom:'80px'}}>
+      <Topbar onBack={()=>setEditing(false)}/>
+      <div className="content">
+        <div className="step-pill">✏️ Modifica profilo</div>
+        <h2 className="screen-title" style={{fontSize:'24px'}}>I tuoi dati</h2>
+        <div className="row2">
+          <div className="field"><label>Nome</label><input value={form.nome} onChange={e=>s('nome',e.target.value)}/></div>
+          <div className="field"><label>Cognome</label><input value={form.cognome} onChange={e=>s('cognome',e.target.value)}/></div>
+        </div>
+        <div className="field"><label>Città</label><input value={form.citta} onChange={e=>s('citta',e.target.value)}/></div>
+        <div className="field"><label>📍 Dove vuoi operare come Maestro?</label><select value={form.zona} onChange={e=>s('zona',e.target.value)} style={sel}>{ZONE.map(z=><option key={z} value={z}>{z}</option>)}</select></div>
+        <div className="field"><label>Bio (opzionale)</label><textarea value={form.bio} onChange={e=>s('bio',e.target.value)} placeholder="Presentati brevemente..." rows={3} style={{resize:'vertical'}}/></div>
+        <button className="btn" onClick={()=>{onUpdate(form);setEditing(false);}}>Salva modifiche →</button>
+        <button className="btn-outline" onClick={()=>setEditing(false)}>Annulla</button>
+      </div>
+    </div>
+  );
+  return(
+    <div style={{paddingBottom:'80px'}}>
+      <div className="prof-header">
+        <div className="prof-avatar">{(form.nome[0]||'P')+(form.cognome[0]||'G')}</div>
+        <p className="prof-name">{form.nome} {form.cognome}</p>
+        <p className="prof-city">📍 {form.citta}</p>
+        <div className="prof-stats">
+          <div className="prof-stat"><p className="ps-val">1</p><p className="ps-lbl">Sessioni</p></div>
+          <div className="prof-stat"><p className="ps-val">9.4</p><p className="ps-lbl">Media</p></div>
+          <div className="prof-stat"><p className="ps-val">{competenza?.skilly||0}</p><p className="ps-lbl">Skilly/h</p></div>
+        </div>
+      </div>
+      <div className="prof-content">
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'12px'}}>
+          <p className="section-title" style={{margin:0}}>Dati personali</p>
+          <button className="edit-btn" onClick={()=>setEditing(true)}>✏️ Modifica</button>
+        </div>
+        {[['Nome',`${form.nome} ${form.cognome}`],['Città',form.citta],['Area operativa',`📍 ${form.zona}`]].map(([l,v])=>(
+          <div key={l} className="prof-field"><p className="pf-label">{l}</p><p className="pf-val">{v}</p></div>
+        ))}
+        {form.bio&&<div className="prof-field"><p className="pf-label">Bio</p><p className="pf-val">{form.bio}</p></div>}
+        <p className="section-title" style={{marginTop:'20px'}}>Le mie competenze</p>
+        {competenze.length>0?competenze.map((c,i)=>(
+          <div key={i} className="comp-card">
+            <div className="comp-avatar">{LIVELLI[c.livello]?.emoji||'🎓'}</div>
+            <div style={{flex:1}}><p className="comp-title">{c.desc||'Competenza'}</p><p className="comp-sub">{c.area} · {LIVELLI[c.livello]?.label}</p>{c.zona&&<p className="comp-zone">📍 {c.zona}</p>}</div>
+            <div className="comp-badge">💎{c.skilly}<span style={{fontSize:'10px',opacity:.8}}>/h</span></div>
+          </div>
+        )):<p style={{fontSize:'14px',color:'#BDC3C7',marginBottom:'12px'}}>Nessuna competenza ancora.</p>}
+        <button className="btn-outline" onClick={()=>setEditing('comp')}>+ Aggiungi competenza</button>
+        <p className="section-title" style={{marginTop:'20px'}}>🏆 Achievement</p>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
+          {[['🎓','Primo Maestro','Prima sessione erogata',true],['💎','Accumulatore','10 Skilly guadagnati',false],['⭐','Top Rated','Media sopra 9.0',false],['🔥','Streak','7 giorni consecutivi',false]].map(([e,t,d,done])=>(
+            <div key={t} style={{background:done?'linear-gradient(135deg,#EAFAF1,#D5F5E3)':'#F8F9FA',border:`2px solid ${done?'#A9DFBF':'#ECF0F1'}`,borderRadius:'16px',padding:'14px',textAlign:'center',opacity:done?1:0.45}}>
+              <p style={{fontSize:'26px',marginBottom:'6px'}}>{e}</p>
+              <p style={{fontFamily:"'Nunito',sans-serif",fontSize:'12px',fontWeight:'800',color:'#2C3E50',marginBottom:'2px'}}>{t}</p>
+              <p style={{fontSize:'10px',color:'#7F8C8D'}}>{d}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>
-  </div>;
+  );
 }
+
+// ── DASHBOARD ──
 function Dashboard({userData:initUD,competenza}) {
   const [tab,setTab]=useState('home');
   const [sub,setSub]=useState(null);
   const [pren,setPren]=useState(null);
+  const [tipoPack,setTipoPack]=useState(null);
+  const [calcPack,setCalcPack]=useState(null);
   const [sessErogate]=useState(1);
   const [wallet,setWallet]=useState(competenza?.skilly||8);
   const [userData,setUD]=useState(initUD);
-  const handlePrenota=m=>{setPren({maestro:m});setSub('pren');};
+
+  const handlePrenota=m=>{setPren({maestro:m});setSub('pack');};
+  const handlePackSel=(tipo,calc)=>{setTipoPack(tipo);setCalcPack(calc);setSub('pren');};
   const handleConferma=d=>{setWallet(w=>Math.max(0,w-d.costo));setPren(d);setSub('conf');};
   const goHome=()=>{setSub(null);setTab('home');};
-  if(sub==='pren') return <Prenotazione maestro={pren.maestro} wallet={wallet} onBack={()=>setSub(null)} onConferma={handleConferma}/>;
+
+  if(sub==='pack') return <SelezionaPacchetto maestro={pren.maestro} onConferma={handlePackSel} onBack={()=>setSub(null)}/>;
+  if(sub==='pren') return <Prenotazione maestro={pren.maestro} wallet={wallet} tipoPacchetto={tipoPack} calcoloSkilly={calcPack} onBack={()=>setSub('pack')} onConferma={handleConferma}/>;
   if(sub==='conf') return <ConfermaSessione prenotazione={pren} onHome={goHome}/>;
+
   const renderTab=()=>{
     if(tab==='catalogo') return <Catalogo wallet={wallet} sessioniErogate={sessErogate} onPrenota={handlePrenota}/>;
     if(tab==='sessioni') return <Sessioni competenza={competenza}/>;
     if(tab==='profilo') return <Profilo userData={userData} competenza={competenza} onUpdate={d=>setUD(p=>({...p,...d}))}/>;
-    return <div style={{paddingBottom:'80px'}}>
-      <div className="dash-hero">
-        <p className="dash-greeting">Bentornato 👋</p>
-        <p className="dash-name">{userData?.nome||'Paolo'} {userData?.cognome||'Galli'}</p>
-        <div className="dash-stats">
-          <div className="stat-card"><p className="stat-val">{wallet}</p><p className="stat-label">Skilly</p></div>
-          <div className="stat-card"><p className="stat-val">{sessErogate}</p><p className="stat-label">Sessioni</p></div>
-          <div className="stat-card"><p className="stat-val">9.4</p><p className="stat-label">Media</p></div>
-        </div>
-      </div>
-      <div className="dash-content">
-        <p className="section-title">Cosa vuoi fare?</p>
-        <div className="action-cards">
-          <div className="action-card maestro" onClick={()=>setTab('sessioni')}>
-            <div className="ac-badge m">Maestro</div><div className="ac-icon">📚</div>
-            <p className="ac-title">Eroga lezione</p><p className="ac-desc">Vedi le prenotazioni ricevute e guadagna Skilly</p>
+    return(
+      <div style={{paddingBottom:'80px'}}>
+        <div className="hero-splash">
+          <div className="streak-bar">
+            <span style={{fontSize:'20px'}}>🔥</span>
+            <span style={{fontSize:'13px',color:'#fff',fontWeight:'600'}}>Streak attiva!</span>
+            <span className="streak-count">3 giorni</span>
           </div>
-          <div className="action-card allievo" onClick={()=>setTab('catalogo')}>
-            <div className="ac-badge a">Allievo</div><div className="ac-icon">🔍</div>
-            <p className="ac-title">Trova Maestro</p><p className="ac-desc">Cerca nel catalogo e prenota una sessione</p>
+          <p className="hero-greeting">Bentornato 👋</p>
+          <p className="hero-name">{userData?.nome||'Paolo'} {userData?.cognome||'Galli'}</p>
+          <div className="stats-row">
+            <div className="stat-pill"><p className="stat-num">💎{wallet}</p><p className="stat-lbl">Skilly</p></div>
+            <div className="stat-pill"><p className="stat-num">{sessErogate}</p><p className="stat-lbl">Sessioni</p></div>
+            <div className="stat-pill"><p className="stat-num">9.4</p><p className="stat-lbl">Media</p></div>
           </div>
         </div>
-        <p className="section-title">Le mie competenze</p>
-        {competenza?.area?<div className="comp-card">
-          <div><p className="comp-title">{competenza.desc||'Competenza'}</p><p className="comp-area">{competenza.area} · {LIVELLI[competenza.livello]?.label}</p>{competenza.zona&&<p style={{fontSize:'11px',color:'#FF5C00',fontWeight:'600',marginTop:'2px'}}>📍 {competenza.zona}</p>}</div>
-          <div className="comp-skilly">{competenza.skilly}<span>/h</span></div>
-        </div>:<p style={{fontSize:'13px',color:'var(--text-3)',marginBottom:'12px'}}>Nessuna competenza depositata.</p>}
-        <button className="btn-outline">+ Aggiungi competenza</button>
+        <div className="action-section">
+          <div className="section-hdr"><p className="section-title">Cosa vuoi fare?</p></div>
+          <div className="action-grid">
+            <div className="action-card maestro" onClick={()=>setTab('sessioni')}>
+              <span className="ac-emoji">📚</span><span className="ac-role m">Maestro</span>
+              <p className="ac-title">Eroga lezione</p><p className="ac-desc">Vedi le prenotazioni e guadagna Skilly</p>
+            </div>
+            <div className="action-card allievo" onClick={()=>setTab('catalogo')}>
+              <span className="ac-emoji">🔍</span><span className="ac-role a">Allievo</span>
+              <p className="ac-title">Trova Maestro</p><p className="ac-desc">Cerca nel catalogo e prenota</p>
+            </div>
+          </div>
+          <div className="section-hdr"><p className="section-title">Le mie competenze</p><span className="see-all" onClick={()=>setTab('profilo')}>Vedi tutto</span></div>
+          {competenza?.area?<div className="comp-card" style={{marginBottom:'20px'}}>
+            <div className="comp-avatar">{LIVELLI[competenza.livello]?.emoji||'🎓'}</div>
+            <div style={{flex:1}}><p className="comp-title">{competenza.desc||'Competenza'}</p><p className="comp-sub">{competenza.area} · {LIVELLI[competenza.livello]?.label}</p>{competenza.zona&&<p className="comp-zone">📍 {competenza.zona}</p>}</div>
+            <div className="comp-badge">💎{competenza.skilly}<span style={{fontSize:'10px',opacity:.8}}>/h</span></div>
+          </div>:<p style={{fontSize:'14px',color:'#BDC3C7',marginBottom:'12px'}}>Nessuna competenza ancora.</p>}
+          <button className="btn-outline" style={{marginBottom:'20px'}} onClick={()=>setTab('profilo')}>+ Aggiungi competenza</button>
+          <div className="section-hdr"><p className="section-title">🏆 Achievement</p></div>
+          <div style={{display:'flex',gap:'10px',overflowX:'auto',paddingBottom:'8px'}}>
+            {[['🎓','Primo Maestro',true],['💎','Accumulatore',false],['⭐','Top Rated',false],['🔥','Streak',false]].map(([e,t,done])=>(
+              <div key={t} style={{minWidth:'76px',background:done?'linear-gradient(135deg,#EAFAF1,#D5F5E3)':'#F8F9FA',border:`2px solid ${done?'#A9DFBF':'#ECF0F1'}`,borderRadius:'14px',padding:'12px 8px',textAlign:'center',opacity:done?1:0.4,flexShrink:0}}>
+                <p style={{fontSize:'22px',marginBottom:'4px'}}>{e}</p>
+                <p style={{fontFamily:"'Nunito',sans-serif",fontSize:'10px',fontWeight:'800',color:'#2C3E50'}}>{t}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    </div>;
+    );
   };
-  return <div>
-    {tab!=='profilo'&&<Topbar showWallet wallet={wallet}/>}
-    <div>{renderTab()}</div>
-    <div className="bottom-nav">
-      {[['home','⌂','Home'],['catalogo','◫','Catalogo'],['sessioni','◷','Sessioni'],['profilo','◉','Profilo']].map(([id,icon,label])=>(
-        <div key={id} className={`nav-item ${tab===id?'active':''}`} onClick={()=>setTab(id)}>
-          <div className="nav-icon">{icon}</div><div className="nav-label">{label}</div>
-        </div>
-      ))}
+
+  return(
+    <div>
+      {tab!=='profilo'&&<Topbar showWallet wallet={wallet}/>}
+      <div>{renderTab()}</div>
+      <div className="bottom-nav">
+        {[['home','🏠','Home'],['catalogo','🔍','Catalogo'],['sessioni','📅','Sessioni'],['profilo','👤','Profilo']].map(([id,icon,label])=>(
+          <div key={id} className={`nav-item ${tab===id?'active':''}`} onClick={()=>setTab(id)}>
+            <div className="nav-icon">{icon}</div>
+            <div className="nav-lbl">{label}</div>
+            {tab===id&&<div className="nav-dot"/>}
+          </div>
+        ))}
+      </div>
     </div>
-  </div>;
+  );
 }
+
+// ── APP ──
 function App() {
-  const [screen,setScreen]=useState('step1');
+  const [screen,setScreen]=useState('splash');
   const [ud,setUd]=useState({});
   const [comp,setComp]=useState({});
-  return <div className="app">
-    {screen==='step1'&&<Step1 onNext={d=>{setUd(d);setScreen('step2');}}/>}
-    {screen==='step2'&&<Step2 onNext={()=>setScreen('step3')} onBack={()=>setScreen('step1')}/>}
-    {screen==='step3'&&<Step3 onNext={d=>{setComp(d);setScreen('benvenuto');}} onBack={()=>setScreen('step2')}/>}
-    {screen==='benvenuto'&&<Benvenuto userData={ud} competenza={comp} onDashboard={()=>setScreen('dashboard')}/>}
-    {screen==='dashboard'&&<Dashboard userData={ud} competenza={comp}/>}
-  </div>;
+  return(
+    <div className="app">
+      {screen==='splash'&&<Splash onEntra={()=>setScreen('step1')}/>}
+      {screen==='step1'&&<Step1 onNext={d=>{setUd(d);setScreen('step2');}}/>}
+      {screen==='step2'&&<Step2 onNext={()=>setScreen('step3')} onBack={()=>setScreen('step1')}/>}
+      {screen==='step3'&&<Step3 onNext={d=>{setComp(d);setScreen('benvenuto');}} onBack={()=>setScreen('step2')}/>}
+      {screen==='benvenuto'&&<Benvenuto userData={ud} competenza={comp} onDashboard={()=>setScreen('dashboard')}/>}
+      {screen==='dashboard'&&<Dashboard userData={ud} competenza={comp}/>}
+    </div>
+  );
 }
+
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
