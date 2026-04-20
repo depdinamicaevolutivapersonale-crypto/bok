@@ -167,7 +167,10 @@ const SKILLY_LIVELLI = {
 function Topbar({ showWallet, wallet, steps, currentStep }) {
   return (
     <div className="topbar">
-      <div className="topbar-logo">B<span>O</span>K</div>
+      <div style={{display:'flex', flexDirection:'column', gap:'2px'}}>
+        <div className="topbar-logo">B<span>O</span>K</div>
+        <p style={{fontSize:'9px', color:'rgba(255,255,255,0.3)', lineHeight:'1.3', letterSpacing:'0.02em'}}>Insegna quello che sai.<br/>Impara quello che vuoi. Per sempre gratis.</p>
+      </div>
       {showWallet ? (
         <div className="topbar-wallet">
           <span className="topbar-wallet-val">{wallet}</span>
@@ -212,8 +215,31 @@ function Step1({ onNext }) {
 }
 
 function Step2({ onNext, onBack }) {
-  const [doc, setDoc] = useState(false);
-  const [selfie, setSelfie] = useState(false);
+  const [doc, setDoc] = useState('idle');
+  const [selfie, setSelfie] = useState('idle');
+
+  const simula = (setter) => {
+    setter('loading');
+    setTimeout(() => setter('done'), 1800);
+  };
+
+  const KycBox = ({ stato, onTap, icon, labelIdle, labelNote }) => (
+    <div
+      className={`kyc-box ${stato === 'done' ? 'done' : ''}`}
+      onClick={() => stato === 'idle' && onTap()}
+      style={{cursor: stato === 'idle' ? 'pointer' : 'default'}}
+    >
+      <div className="kyc-icon">
+        {stato === 'loading' ? '⏳' : stato === 'done' ? '✅' : icon}
+      </div>
+      <p className="kyc-label">
+        {stato === 'idle' && <>{labelIdle}<span className="kyc-note">{labelNote}</span></>}
+        {stato === 'loading' && <span style={{color:'#D4A843'}}>Caricamento in corso...</span>}
+        {stato === 'done' && <span style={{color:'#4CAF7D'}}>Caricato con successo ✓</span>}
+      </p>
+    </div>
+  );
+
   return (
     <div>
       <Topbar steps currentStep={2} />
@@ -221,20 +247,8 @@ function Step2({ onNext, onBack }) {
         <p className="step-label">Passo 2 di 3</p>
         <h2 className="screen-title">Verifica<br/>identità</h2>
         <p className="screen-sub">BOK verifica chi sei prima di attivare il tuo account. È una misura di sicurezza per proteggere tutti.</p>
-        <div className={`kyc-box ${doc ? 'done' : ''}`} onClick={() => setDoc(true)}>
-          <div className="kyc-icon">🪪</div>
-          <p className="kyc-label">
-            {doc ? 'Documento caricato ✓' : 'Carica documento d\'identità'}
-            {!doc && <span className="kyc-note">Carta d'identità o passaporto — fronte e retro</span>}
-          </p>
-        </div>
-        <div className={`kyc-box ${selfie ? 'done' : ''}`} onClick={() => setSelfie(true)}>
-          <div className="kyc-icon">🤳</div>
-          <p className="kyc-label">
-            {selfie ? 'Selfie caricato ✓' : 'Scatta un selfie con il documento'}
-            {!selfie && <span className="kyc-note">Tieni il documento accanto al viso, ben visibile</span>}
-          </p>
-        </div>
+        <KycBox stato={doc} onTap={() => simula(setDoc)} icon="🪪" labelIdle="Carica documento d'identità" labelNote="Carta d'identità o passaporto — fronte e retro. Tocca per caricare." />
+        <KycBox stato={selfie} onTap={() => simula(setSelfie)} icon="🤳" labelIdle="Scatta un selfie con il documento" labelNote="Tieni il documento accanto al viso, ben visibile. Tocca per scattare." />
         <p className="note" style={{textAlign:'left', marginBottom:'20px'}}>La verifica avviene entro 24 ore. Riceverai una email di conferma. Nel frattempo puoi continuare la configurazione.</p>
         <button className="btn" onClick={onNext}>Avanti →</button>
         <button className="btn-outline" onClick={onBack}>← Indietro</button>
@@ -364,42 +378,273 @@ function Benvenuto({ userData, competenza, onDashboard }) {
   );
 }
 
+const MAESTRI = [
+  { id:1, nome:'Sara Conti', area:'Matematica', macro:'istruzione', livello:'12', skilly:12, media:9.4, sessioni:34, desc:'Analisi, algebra lineare e statistica. Magistrale in Matematica alla Sapienza.' },
+  { id:2, nome:'Luca Ferretti', area:'Programmazione Python', macro:'informatica', livello:'8', skilly:8, media:8.7, sessioni:21, desc:'Python per principianti e intermedi. Data science e automazione.' },
+  { id:3, nome:'Maria Esposito', area:'Inglese B2-C1', macro:'lingue', livello:'8', skilly:8, media:9.8, sessioni:67, desc:'Preparazione Cambridge, conversazione avanzata, business English.' },
+  { id:4, nome:'Roberto Mancini', area:'Diritto del lavoro', macro:'giuridico', livello:'26', skilly:26, media:9.1, sessioni:18, desc:'Avvocato specializzato. Contratti, licenziamenti, tutele sindacali.' },
+  { id:5, nome:'Giulia Romano', area:'Chitarra classica', macro:'musica', livello:'20', skilly:20, media:9.6, sessioni:45, desc:'Conservatorio di Milano. Tecnica classica, solfeggio, teoria musicale.' },
+  { id:6, nome:'Andrea Bianchi', area:'Fotografia digitale', macro:'arte', livello:'8', skilly:8, media:8.3, sessioni:12, desc:'Composizione, luce naturale, post-produzione Lightroom.' },
+  { id:7, nome:'Chiara Lombardi', area:'Nutrizione sportiva', macro:'salute', livello:'20', skilly:20, media:9.2, sessioni:29, desc:'Biologa nutrizionista. Piani alimentari per sport amatoriale e agonistico.' },
+  { id:8, nome:'Marco Venezia', area:'Marketing digitale', macro:'business', livello:'26', skilly:26, media:8.9, sessioni:41, desc:'15 anni di esperienza. SEO, social media strategy, Google Ads.' },
+];
+
+function StarRating({ val }) {
+  const full = Math.floor(val / 2);
+  return (
+    <span style={{color:'#D4A843', fontSize:'11px', letterSpacing:'1px'}}>
+      {'★'.repeat(full)}{'☆'.repeat(5-full)}
+      <span style={{color:'rgba(255,255,255,0.4)', marginLeft:'4px', fontSize:'11px'}}>{val}</span>
+    </span>
+  );
+}
+
+function Catalogo({ skilly, sessioniErogate, onPrenota }) {
+  const [search, setSearch] = useState('');
+  const [filtroArea, setFiltroArea] = useState('');
+  const bloccato = sessioniErogate === 0;
+
+  const filtered = MAESTRI.filter(m => {
+    const matchSearch = m.nome.toLowerCase().includes(search.toLowerCase()) ||
+      m.area.toLowerCase().includes(search.toLowerCase()) ||
+      m.desc.toLowerCase().includes(search.toLowerCase());
+    const matchArea = !filtroArea || m.macro === filtroArea;
+    return matchSearch && matchArea;
+  });
+
+  return (
+    <div style={{paddingBottom:'80px'}}>
+      <div style={{background:'#1B2E4B', padding:'16px 20px', borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
+        <p style={{fontSize:'10px', letterSpacing:'0.2em', textTransform:'uppercase', color:'#D4A843', marginBottom:'12px'}}>Catalogo Maestri</p>
+        <input
+          className="bok-search"
+          type="text"
+          placeholder="Cerca materia o Maestro..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          style={{width:'100%', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', fontFamily:"'DM Sans',sans-serif", fontSize:'14px', padding:'11px 16px', outline:'none', marginBottom:'10px', boxSizing:'border-box'}}
+        />
+        <select
+          value={filtroArea}
+          onChange={e => setFiltroArea(e.target.value)}
+          style={{width:'100%', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', fontFamily:"'DM Sans',sans-serif", fontSize:'13px', padding:'10px 16px', outline:'none', appearance:'none', boxSizing:'border-box'}}
+        >
+          <option value="">Tutte le aree</option>
+          <option value="istruzione">Istruzione e Scienze</option>
+          <option value="lingue">Lingue</option>
+          <option value="informatica">Informatica</option>
+          <option value="giuridico">Giuridico ed Economico</option>
+          <option value="salute">Salute</option>
+          <option value="ingegneria">Ingegneria</option>
+          <option value="arte">Arte</option>
+          <option value="musica">Musica</option>
+          <option value="sport">Sport</option>
+          <option value="business">Business</option>
+        </select>
+      </div>
+
+      {bloccato && (
+        <div style={{background:'rgba(26,58,107,0.2)', border:'1px solid rgba(26,58,107,0.4)', margin:'16px 20px', padding:'14px 16px', display:'flex', gap:'12px', alignItems:'flex-start'}}>
+          <span style={{fontSize:'18px'}}>🔒</span>
+          <div>
+            <p style={{fontSize:'13px', fontWeight:'500', color:'#6B9FD4', marginBottom:'4px'}}>Per prenotare devi prima erogare</p>
+            <p style={{fontSize:'12px', color:'rgba(255,255,255,0.35)', lineHeight:'1.5'}}>Eroga almeno una sessione come Maestro. Solo dopo puoi usare gli Skilly per imparare da altri.</p>
+          </div>
+        </div>
+      )}
+
+      <div style={{padding:'12px 20px 0'}}>
+        <p style={{fontSize:'10px', letterSpacing:'0.15em', textTransform:'uppercase', color:'rgba(255,255,255,0.3)', marginBottom:'12px'}}>{filtered.length} Maestri disponibili</p>
+        {filtered.map(m => (
+          <div key={m.id} style={{background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)', marginBottom:'10px', padding:'16px'}}>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:'8px'}}>
+              <div style={{display:'flex', gap:'12px', alignItems:'center'}}>
+                <div style={{width:'38px', height:'38px', minWidth:'38px', background:'rgba(26,107,58,0.15)', border:'1px solid rgba(26,107,58,0.3)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Cormorant Garamond',serif", fontSize:'16px', color:'#4CAF7D'}}>
+                  {m.nome.split(' ').map(n=>n[0]).join('')}
+                </div>
+                <div>
+                  <p style={{fontSize:'14px', fontWeight:'500', color:'#fff', marginBottom:'2px'}}>{m.nome}</p>
+                  <p style={{fontSize:'11px', color:'rgba(255,255,255,0.4)'}}>{m.sessioni} sessioni erogate</p>
+                </div>
+              </div>
+              <div style={{textAlign:'right'}}>
+                <div style={{fontFamily:"'Cormorant Garamond',serif", fontSize:'24px', fontWeight:'300', color:'#D4A843', lineHeight:'1'}}>{m.skilly}</div>
+                <div style={{fontSize:'9px', color:'rgba(255,255,255,0.3)', letterSpacing:'0.1em', textTransform:'uppercase'}}>Skilly/ora</div>
+              </div>
+            </div>
+            <p style={{fontSize:'12px', color:'rgba(255,255,255,0.35)', lineHeight:'1.5', marginBottom:'10px'}}>{m.desc}</p>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <StarRating val={m.media} />
+              {bloccato ? (
+                <div style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', padding:'8px 14px', fontSize:'11px', color:'rgba(255,255,255,0.25)', letterSpacing:'0.1em', textTransform:'uppercase', cursor:'not-allowed'}}>
+                  🔒 Bloccato
+                </div>
+              ) : (
+                <button
+                  onClick={() => onPrenota(m)}
+                  style={{background:'#1A6B3A', color:'#fff', border:'none', padding:'8px 16px', fontFamily:"'DM Sans',sans-serif", fontSize:'11px', fontWeight:'500', letterSpacing:'0.12em', textTransform:'uppercase', cursor:'pointer'}}
+                >
+                  Prenota →
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Prenotazione({ maestro, skilly, onBack, onConferma }) {
+  const [giorno, setGiorno] = useState('');
+  const [orario, setOrario] = useState('');
+  const [forWho, setForWho] = useState('me');
+  const [durata, setDurata] = useState('60');
+  const costoSkilly = maestro.skilly * (parseInt(durata) / 60);
+  const puoPagare = skilly >= costoSkilly;
+
+  return (
+    <div style={{paddingBottom:'40px'}}>
+      <div style={{background:'#1B2E4B', padding:'16px 20px', borderBottom:'1px solid rgba(255,255,255,0.06)', display:'flex', alignItems:'center', gap:'12px'}}>
+        <button onClick={onBack} style={{background:'transparent', border:'none', color:'rgba(255,255,255,0.4)', fontSize:'18px', cursor:'pointer'}}>←</button>
+        <p style={{fontSize:'13px', color:'#fff', fontWeight:'500'}}>Prenota sessione</p>
+      </div>
+
+      <div style={{padding:'20px'}}>
+        <div style={{display:'flex', gap:'12px', alignItems:'center', background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)', padding:'14px', marginBottom:'20px'}}>
+          <div style={{width:'42px', height:'42px', minWidth:'42px', background:'rgba(26,107,58,0.15)', border:'1px solid rgba(26,107,58,0.3)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Cormorant Garamond',serif", fontSize:'16px', color:'#4CAF7D'}}>
+            {maestro.nome.split(' ').map(n=>n[0]).join('')}
+          </div>
+          <div>
+            <p style={{fontSize:'14px', fontWeight:'500', color:'#fff'}}>{maestro.nome}</p>
+            <p style={{fontSize:'12px', color:'rgba(255,255,255,0.4)'}}>{maestro.area} · <StarRating val={maestro.media} /></p>
+          </div>
+        </div>
+
+        <div className="field"><label>Giorno</label>
+          <input type="date" value={giorno} onChange={e=>setGiorno(e.target.value)} style={{width:'100%', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', fontFamily:"'DM Sans',sans-serif", fontSize:'15px', padding:'13px 16px', outline:'none', boxSizing:'border-box'}} />
+        </div>
+
+        <div className="field"><label>Orario</label>
+          <select value={orario} onChange={e=>setOrario(e.target.value)} style={{width:'100%', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', fontFamily:"'DM Sans',sans-serif", fontSize:'15px', padding:'13px 16px', outline:'none', appearance:'none', boxSizing:'border-box'}}>
+            <option value="">Scegli un orario...</option>
+            {['09:00','10:00','11:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00'].map(h => (
+              <option key={h} value={h}>{h}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="field"><label>Durata</label>
+          <select value={durata} onChange={e=>setDurata(e.target.value)} style={{width:'100%', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', fontFamily:"'DM Sans',sans-serif", fontSize:'15px', padding:'13px 16px', outline:'none', appearance:'none', boxSizing:'border-box'}}>
+            <option value="30">30 minuti</option>
+            <option value="60">1 ora</option>
+            <option value="90">1 ora e 30</option>
+            <option value="120">2 ore</option>
+          </select>
+        </div>
+
+        <div className="field"><label>La sessione è per</label>
+          <select value={forWho} onChange={e=>setForWho(e.target.value)} style={{width:'100%', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', fontFamily:"'DM Sans',sans-serif", fontSize:'15px', padding:'13px 16px', outline:'none', appearance:'none', boxSizing:'border-box'}}>
+            <option value="me">Me stesso</option>
+            <option value="beneficiario1">Beneficiario 1</option>
+            <option value="beneficiario2">Beneficiario 2</option>
+            <option value="beneficiario3">Beneficiario 3</option>
+          </select>
+        </div>
+
+        <div style={{background: puoPagare ? 'rgba(184,134,11,0.07)' : 'rgba(200,50,50,0.07)', border:`1px solid ${puoPagare ? 'rgba(184,134,11,0.2)' : 'rgba(200,50,50,0.2)'}`, padding:'16px', marginTop:'8px', marginBottom:'20px'}}>
+          <p style={{fontSize:'10px', letterSpacing:'0.15em', textTransform:'uppercase', color:'rgba(255,255,255,0.3)', marginBottom:'8px'}}>Riepilogo</p>
+          <div style={{display:'flex', justifyContent:'space-between', marginBottom:'6px'}}>
+            <span style={{fontSize:'13px', color:'rgba(255,255,255,0.5)'}}>Costo sessione</span>
+            <span style={{fontFamily:"'Cormorant Garamond',serif", fontSize:'22px', color:'#D4A843', fontWeight:'300'}}>{costoSkilly} Skilly</span>
+          </div>
+          <div style={{display:'flex', justifyContent:'space-between'}}>
+            <span style={{fontSize:'13px', color:'rgba(255,255,255,0.5)'}}>Il tuo wallet</span>
+            <span style={{fontFamily:"'Cormorant Garamond',serif", fontSize:'22px', color: puoPagare ? '#D4A843' : '#E06060', fontWeight:'300'}}>{skilly} Skilly</span>
+          </div>
+          {!puoPagare && (
+            <p style={{fontSize:'11px', color:'#E06060', marginTop:'8px', lineHeight:'1.5'}}>Skilly insufficienti. Eroga prima altre sessioni da Maestro per accumularne di più.</p>
+          )}
+        </div>
+
+        <button
+          onClick={() => puoPagare && giorno && orario && onConferma({ maestro, giorno, orario, durata, forWho, costo: costoSkilly })}
+          style={{width:'100%', background: puoPagare ? '#B8860B' : 'rgba(255,255,255,0.08)', color: puoPagare ? '#fff' : 'rgba(255,255,255,0.25)', fontFamily:"'DM Sans',sans-serif", fontSize:'12px', fontWeight:'500', letterSpacing:'0.16em', textTransform:'uppercase', padding:'17px', border:'none', cursor: puoPagare ? 'pointer' : 'not-allowed', display:'block'}}
+        >
+          Conferma prenotazione →
+        </button>
+        <button className="btn-outline" onClick={onBack} style={{width:'100%', background:'transparent', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(255,255,255,0.35)', fontFamily:"'DM Sans',sans-serif", fontSize:'12px', padding:'14px', cursor:'pointer', marginTop:'8px', display:'block'}}>← Indietro</button>
+      </div>
+    </div>
+  );
+}
+
+function ConfermaSessione({ prenotazione, onDashboard }) {
+  return (
+    <div style={{padding:'40px 20px', textAlign:'center'}}>
+      <div style={{width:'64px', height:'64px', background:'rgba(26,107,58,0.2)', border:'1px solid #1A6B3A', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 24px', fontSize:'24px'}}>✓</div>
+      <p style={{fontFamily:"'Cormorant Garamond',serif", fontSize:'30px', fontWeight:'400', color:'#fff', marginBottom:'12px', lineHeight:'1.2'}}>Sessione<br/>prenotata.</p>
+      <p style={{fontSize:'13px', color:'rgba(255,255,255,0.4)', lineHeight:'1.6', marginBottom:'28px'}}>
+        Hai prenotato una sessione con <strong style={{color:'#fff'}}>{prenotazione.maestro.nome}</strong> il <strong style={{color:'#fff'}}>{prenotazione.giorno}</strong> alle <strong style={{color:'#fff'}}>{prenotazione.orario}</strong>. Riceverai il link per la videochiamata via email.
+      </p>
+      <div style={{background:'rgba(184,134,11,0.07)', border:'1px solid rgba(184,134,11,0.2)', padding:'16px', marginBottom:'28px', display:'flex', alignItems:'center', justifyContent:'center', gap:'12px'}}>
+        <span style={{fontFamily:"'Cormorant Garamond',serif", fontSize:'36px', color:'#D4A843', fontWeight:'300'}}>-{prenotazione.costo}</span>
+        <div style={{textAlign:'left'}}>
+          <p style={{fontSize:'10px', letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(255,255,255,0.3)'}}>Skilly scalati</p>
+          <p style={{fontSize:'12px', color:'rgba(255,255,255,0.4)'}}>dal tuo wallet</p>
+        </div>
+      </div>
+      <button onClick={onDashboard} style={{width:'100%', background:'#B8860B', color:'#fff', fontFamily:"'DM Sans',sans-serif", fontSize:'12px', fontWeight:'500', letterSpacing:'0.16em', textTransform:'uppercase', padding:'17px', border:'none', cursor:'pointer', display:'block', maxWidth:'300px', margin:'0 auto'}}>Torna alla dashboard →</button>
+    </div>
+  );
+}
+
 function Dashboard({ userData, competenza }) {
   const [tab, setTab] = useState('home');
-  const skilly = competenza?.skilly || 0;
-  return (
-    <div>
-      <Topbar showWallet wallet={skilly} />
-      <div className="dashboard">
+  const [subScreen, setSubScreen] = useState(null);
+  const [prenotazione, setPrenotazione] = useState(null);
+  const [sessioniErogate] = useState(0);
+  const [wallet, setWallet] = useState(competenza?.skilly || 0);
+
+  const handlePrenota = (maestro) => {
+    setPrenotazione({ maestro });
+    setSubScreen('prenotazione');
+  };
+
+  const handleConferma = (data) => {
+    setWallet(w => Math.max(0, w - data.costo));
+    setPrenotazione(data);
+    setSubScreen('conferma');
+  };
+
+  const renderContent = () => {
+    if (subScreen === 'prenotazione') return <Prenotazione maestro={prenotazione.maestro} skilly={wallet} onBack={() => setSubScreen(null)} onConferma={handleConferma} />;
+    if (subScreen === 'conferma') return <ConfermaSessione prenotazione={prenotazione} onDashboard={() => { setSubScreen(null); setTab('home'); }} />;
+
+    if (tab === 'catalogo') return <Catalogo skilly={wallet} sessioniErogate={sessioniErogate} onPrenota={handlePrenota} />;
+
+    return (
+      <div style={{paddingBottom:'80px'}}>
         <div className="dash-hero">
           <p className="dash-greeting">Bentornato</p>
           <p className="dash-name">{userData?.nome || 'Paolo'} {userData?.cognome || 'Galli'}</p>
           <div className="dash-stats">
-            <div className="stat-card">
-              <p className="stat-val">{skilly}</p>
-              <p className="stat-label">Skilly</p>
-            </div>
-            <div className="stat-card">
-              <p className="stat-val">0</p>
-              <p className="stat-label">Sessioni</p>
-            </div>
-            <div className="stat-card">
-              <p className="stat-val">—</p>
-              <p className="stat-label">Media</p>
-            </div>
+            <div className="stat-card"><p className="stat-val">{wallet}</p><p className="stat-label">Skilly</p></div>
+            <div className="stat-card"><p className="stat-val">{sessioniErogate}</p><p className="stat-label">Sessioni</p></div>
+            <div className="stat-card"><p className="stat-val">—</p><p className="stat-label">Media</p></div>
           </div>
         </div>
 
         <div className="dash-section">
           <p className="dash-section-title">Cosa vuoi fare?</p>
           <div className="action-cards">
-            <div className="action-card maestro">
+            <div className="action-card maestro" style={{cursor:'pointer'}} onClick={() => setTab('sessioni')}>
               <div className="badge-maestro">Maestro</div>
               <div className="action-card-icon">📚</div>
               <p className="action-card-title">Eroga una lezione</p>
               <p className="action-card-desc">Guarda chi ti ha prenotato e guadagna Skilly</p>
             </div>
-            <div className="action-card allievo">
+            <div className="action-card allievo" style={{cursor:'pointer'}} onClick={() => setTab('catalogo')}>
               <div className="badge-allievo">Allievo</div>
               <div className="action-card-icon">🔍</div>
               <p className="action-card-title">Trova un Maestro</p>
@@ -416,9 +661,7 @@ function Dashboard({ userData, competenza }) {
                 <p className="comp-title">{competenza.desc || 'Competenza'}</p>
                 <p className="comp-area">{competenza.area} · {SKILLY_LIVELLI[competenza.livello]?.label}</p>
               </div>
-              <div>
-                <div className="comp-skilly">{competenza.skilly}<span>/h</span></div>
-              </div>
+              <div><div className="comp-skilly">{competenza.skilly}<span>/h</span></div></div>
             </div>
           ) : (
             <p style={{fontSize:'13px', color:'rgba(255,255,255,0.25)', marginBottom:'16px'}}>Nessuna competenza depositata.</p>
@@ -431,25 +674,31 @@ function Dashboard({ userData, competenza }) {
           <p style={{fontSize:'13px', color:'rgba(255,255,255,0.25)', padding:'20px 0'}}>Nessuna sessione programmata.</p>
         </div>
       </div>
+    );
+  };
 
-      <div className="bottom-nav">
-        <div className={`nav-item ${tab==='home'?'active':''}`} onClick={()=>setTab('home')}>
-          <div className="nav-icon">⌂</div>
-          <div className="nav-label">Home</div>
-        </div>
-        <div className={`nav-item ${tab==='catalogo'?'active':''}`} onClick={()=>setTab('catalogo')}>
-          <div className="nav-icon">◫</div>
-          <div className="nav-label">Catalogo</div>
-        </div>
-        <div className={`nav-item ${tab==='sessioni'?'active':''}`} onClick={()=>setTab('sessioni')}>
-          <div className="nav-icon">◷</div>
-          <div className="nav-label">Sessioni</div>
-        </div>
-        <div className={`nav-item ${tab==='profilo'?'active':''}`} onClick={()=>setTab('profilo')}>
-          <div className="nav-icon">◉</div>
-          <div className="nav-label">Profilo</div>
-        </div>
+  return (
+    <div>
+      <Topbar showWallet wallet={wallet} />
+      <div className="dashboard">
+        {renderContent()}
       </div>
+      {!subScreen && (
+        <div className="bottom-nav">
+          <div className={`nav-item ${tab==='home'?'active':''}`} onClick={()=>setTab('home')}>
+            <div className="nav-icon">⌂</div><div className="nav-label">Home</div>
+          </div>
+          <div className={`nav-item ${tab==='catalogo'?'active':''}`} onClick={()=>setTab('catalogo')}>
+            <div className="nav-icon">◫</div><div className="nav-label">Catalogo</div>
+          </div>
+          <div className={`nav-item ${tab==='sessioni'?'active':''}`} onClick={()=>setTab('sessioni')}>
+            <div className="nav-icon">◷</div><div className="nav-label">Sessioni</div>
+          </div>
+          <div className={`nav-item ${tab==='profilo'?'active':''}`} onClick={()=>setTab('profilo')}>
+            <div className="nav-icon">◉</div><div className="nav-label">Profilo</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
