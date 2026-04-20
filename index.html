@@ -52,7 +52,7 @@ html, body { height: 100%; background: #F0F2F5; font-family: 'Inter', sans-serif
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ── TOPBAR ── */
-.topbar { background: var(--white); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 100; }
+.topbar { background: linear-gradient(135deg, #fff8f5 0%, #fff 60%); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #FFE0D0; position: sticky; top: 0; z-index: 100; }
 .logo-wrap { display: flex; flex-direction: column; }
 .logo { font-family: 'Nunito', sans-serif; font-size: 24px; font-weight: 900; background: linear-gradient(135deg, var(--orange), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
 .logo-barter { font-size: 9px; color: var(--text2); font-weight: 600; margin-top: 1px; letter-spacing: 0.05em; }
@@ -64,16 +64,17 @@ html, body { height: 100%; background: #F0F2F5; font-family: 'Inter', sans-serif
 .pdot { width: 26px; height: 5px; border-radius: 3px; background: var(--border); transition: all 0.3s; }
 .pdot.active { background: var(--orange); }
 .pdot.done { background: var(--green); }
-.back-btn { width: 36px; height: 36px; background: var(--surface); border: 2px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--text2); flex-shrink: 0; }
+.back-btn { width: 36px; height: 36px; background: var(--orange-bg); border: 2px solid #FFD0BC; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--orange); flex-shrink: 0; }
 
 /* ── CONTENT ── */
 .content { padding: 24px 20px 48px; }
 .step-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--orange-bg); border: 1.5px solid var(--orange); color: var(--orange); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 14px; }
 .screen-title { font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 900; color: var(--text); line-height: 1.15; margin-bottom: 8px; }
+.screen-title span { color: var(--orange); }
 .screen-sub { font-size: 14px; color: var(--text2); margin-bottom: 24px; line-height: 1.6; }
 .field { margin-bottom: 16px; }
-.field label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text2); margin-bottom: 7px; display: block; }
-.field input, .field select, .field textarea { width: 100%; background: var(--surface); border: 2px solid var(--border); color: var(--text); font-family: 'Inter', sans-serif; font-size: 15px; padding: 13px 16px; outline: none; border-radius: 14px; transition: all 0.2s; appearance: none; box-sizing: border-box; }
+.field label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--orange); margin-bottom: 7px; display: block; }
+.field input, .field select, .field textarea { width: 100%; background: #FFFBF9; border: 2px solid #FFD0BC; color: var(--text); font-family: 'Inter', sans-serif; font-size: 15px; padding: 13px 16px; outline: none; border-radius: 14px; transition: all 0.2s; appearance: none; box-sizing: border-box; }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--orange); background: var(--white); box-shadow: 0 0 0 4px rgba(255,107,53,0.1); }
 .field input::placeholder { color: var(--text3); }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -82,8 +83,8 @@ html, body { height: 100%; background: #F0F2F5; font-family: 'Inter', sans-serif
 .btn:active { transform: scale(0.98); }
 .btn-green { background: linear-gradient(135deg, var(--green), var(--green2)); box-shadow: 0 4px 14px rgba(46,204,113,0.35); }
 .btn-purple { background: linear-gradient(135deg, var(--purple), var(--purple2)); box-shadow: 0 4px 14px rgba(155,89,182,0.35); }
-.btn-outline { width: 100%; background: transparent; border: 2px solid var(--border); color: var(--text2); font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; padding: 14px; cursor: pointer; border-radius: 16px; display: block; margin-top: 10px; }
-.divider { height: 1px; background: var(--border); margin: 20px 0; }
+.btn-outline { width: 100%; background: transparent; border: 2px solid #FFD0BC; color: var(--orange); font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; padding: 14px; cursor: pointer; border-radius: 16px; display: block; margin-top: 10px; }
+.divider { height: 1px; background: #FFE0D0; margin: 20px 0; }
 .note { font-size: 12px; color: var(--text3); text-align: center; margin-top: 12px; line-height: 1.5; }
 .link-row { text-align: center; font-size: 14px; color: var(--text2); margin-top: 10px; }
 .link-row span { color: var(--orange); font-weight: 700; cursor: pointer; }
@@ -359,6 +360,13 @@ function Step1({onNext}) {
   return (
     <div>
       <Topbar steps currentStep={1}/>
+      <div style={{background:'linear-gradient(135deg, #FF6B35, #E91E8C)', padding:'16px 20px', display:'flex', alignItems:'center', gap:'12px'}}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="28" height="28"><path fillRule="evenodd" d="M9 4.5a.75.75 0 0 1 .721.544l.813 2.846a3.75 3.75 0 0 0 2.576 2.576l2.846.813a.75.75 0 0 1 0 1.442l-2.846.813a3.75 3.75 0 0 0-2.576 2.576l-.813 2.846a.75.75 0 0 1-1.442 0l-.813-2.846a3.75 3.75 0 0 0-2.576-2.576l-2.846-.813a.75.75 0 0 1 0-1.442l2.846-.813A3.75 3.75 0 0 0 7.466 7.89l.813-2.846A.75.75 0 0 1 9 4.5ZM18 1.5a.75.75 0 0 1 .728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 0 1 0 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 0 1-1.456 0l-.258-1.036a2.625 2.625 0 0 0-1.91-1.91l-1.036-.258a.75.75 0 0 1 0-1.456l1.036-.258a2.625 2.625 0 0 0 1.91-1.91l.258-1.036A.75.75 0 0 1 18 1.5Z" clipRule="evenodd"/></svg>
+        <div>
+          <p style={{fontFamily:"'Nunito',sans-serif",fontSize:'14px',fontWeight:'900',color:'#fff'}}>Inizia il tuo viaggio su BOK</p>
+          <p style={{fontSize:'11px',color:'rgba(255,255,255,0.8)',marginTop:'2px'}}>3 minuti per entrare nella community</p>
+        </div>
+      </div>
       <div className="content">
         <div className="step-pill">✨ Passo 1 di 3</div>
         <h2 className="screen-title">Ciao! 👋<br/>Chi sei?</h2>
