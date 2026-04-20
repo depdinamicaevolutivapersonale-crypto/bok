@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BOK — Barter Of Knowledge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #1B2E4B;
+    --brand-deep: #0D1B2E;
+    --gold: #B8860B;
+    --gold-light: #D4A843;
+    --maestro: #1A6B3A;
+    --allievo: #1A3A6B;
+    --surface: #FAFAF8;
+    --surface-2: #F4F2EE;
+    --white: #FFFFFF;
+  }
+  html, body { height: 100%; background: #0D1B2E; }
+  #root { min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
+  .app-frame {
+    width: 100%;
+    max-width: 430px;
+    min-height: 100vh;
+    background: #0D1B2E;
+    position: relative;
+    font-family: 'DM Sans', sans-serif;
+    color: #fff;
+  }
+  @media (min-width: 430px) {
+    #root { align-items: center; padding: 20px; min-height: 100vh; }
+    .app-frame { min-height: auto; max-height: 900px; overflow-y: auto; box-shadow: 0 0 80px rgba(0,0,0,0.5); }
+  }
+
+  /* TOPBAR */
+  .topbar { background: #1B2E4B; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(184,134,11,0.2); position: sticky; top: 0; z-index: 10; }
+  .topbar-logo { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 300; letter-spacing: 0.1em; color: #fff; }
+  .topbar-logo span { color: #D4A843; }
+  .topbar-wallet { display: flex; align-items: center; gap: 6px; background: rgba(184,134,11,0.1); border: 1px solid rgba(184,134,11,0.2); padding: 6px 12px; }
+  .topbar-wallet-val { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 300; color: #D4A843; }
+  .topbar-wallet-label { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* PROGRESS DOTS */
+  .progress-dots { display: flex; gap: 6px; }
+  .pdot { width: 28px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.15); transition: background 0.3s; }
+  .pdot.active { background: #D4A843; }
+  .pdot.done { background: #1A6B3A; }
+
+  /* CONTENT */
+  .content { padding: 28px 20px 40px; }
+  .step-label { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #D4A843; margin-bottom: 8px; }
+  .screen-title { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.2; color: #fff; margin-bottom: 6px; }
+  .screen-sub { font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 28px; line-height: 1.6; }
+
+  /* FORM */
+  .field { margin-bottom: 16px; }
+  .field label { font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 6px; display: block; }
+  .field input, .field select { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 15px; padding: 13px 16px; outline: none; border-radius: 0; transition: border-color 0.2s, background 0.2s; appearance: none; }
+  .field input:focus, .field select:focus { border-color: #D4A843; background: rgba(255,255,255,0.09); }
+  .field input::placeholder { color: rgba(255,255,255,0.2); }
+  .field select option { background: #1B2E4B; color: #fff; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* BUTTONS */
+  .btn { width: 100%; background: #B8860B; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; padding: 17px; border: none; cursor: pointer; display: block; margin-top: 8px; transition: background 0.2s; }
+  .btn:hover { background: #D4A843; color: #0D1B2E; }
+  .btn-outline { width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.4); font-family: 'DM Sans', sans-serif; font-size: 12px; padding: 15px; cursor: pointer; display: block; margin-top: 8px; transition: border-color 0.2s; }
+  .btn-outline:hover { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.7); }
+  .btn-maestro { background: #1A6B3A; }
+  .btn-maestro:hover { background: #22894A; color: #fff; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: rgba(255,255,255,0.06); margin: 20px 0; }
+  .note { font-size: 11px; color: rgba(255,255,255,0.2); text-align: center; margin-top: 10px; line-height: 1.5; }
+  .link-text { text-align: center; font-size: 13px; color: rgba(255,255,255,0.35); margin-top: 6px; }
+  .link-text span { color: #D4A843; cursor: pointer; }
+
+  /* KYC BOXES */
+  .kyc-box { background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15); padding: 22px 16px; text-align: center; margin-bottom: 14px; cursor: pointer; transition: border-color 0.2s; }
+  .kyc-box:hover { border-color: rgba(184,134,11,0.5); }
+  .kyc-box.done { border-color: #1A6B3A; border-style: solid; }
+  .kyc-box .kyc-icon { font-size: 26px; margin-bottom: 8px; }
+  .kyc-box .kyc-label { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+  .kyc-box.done .kyc-label { color: #4CAF7D; }
+  .kyc-note { font-size: 11px; opacity: 0.5; display: block; margin-top: 4px; }
+
+  /* SKILLY PREVIEW */
+  .skilly-box { background: rgba(184,134,11,0.07); border: 1px solid rgba(184,134,11,0.2); padding: 16px 20px; margin-top: 16px; display: flex; align-items: center; gap: 16px; }
+  .skilly-box-val { font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 300; color: #D4A843; line-height: 1; }
+  .skilly-box-text .slabel { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 2px; }
+  .skilly-box-text .sdesc { font-size: 13px; color: rgba(255,255,255,0.5); }
+
+  /* BENVENUTO */
+  .welcome-screen { padding: 32px 20px 40px; }
+  .welcome-badge { display: inline-flex; align-items: center; gap: 12px; background: rgba(26,107,58,0.12); border: 1px solid rgba(26,107,58,0.3); padding: 12px 20px; margin-bottom: 28px; }
+  .welcome-badge-icon { font-size: 20px; }
+  .welcome-badge-text { font-size: 12px; color: rgba(255,255,255,0.5); }
+  .welcome-badge-text strong { color: #4CAF7D; display: block; font-size: 13px; font-weight: 500; }
+  .welcome-steps { margin: 28px 0; }
+  .welcome-step { display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start; }
+  .welcome-step-num { width: 32px; height: 32px; min-width: 32px; background: rgba(184,134,11,0.1); border: 1px solid rgba(184,134,11,0.2); display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 16px; color: #D4A843; }
+  .welcome-step-body .wtitle { font-size: 14px; font-weight: 500; color: #fff; margin-bottom: 3px; }
+  .welcome-step-body .wdesc { font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.5; }
+  .skilly-welcome-badge { display: flex; align-items: center; gap: 12px; background: rgba(184,134,11,0.08); border: 1px solid rgba(184,134,11,0.2); padding: 16px 20px; margin: 20px 0; }
+  .skilly-welcome-val { font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 300; color: #D4A843; line-height: 1; }
+  .skilly-welcome-text .sl { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+  .skilly-welcome-text .sd { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+  /* DASHBOARD */
+  .dashboard { padding: 0 0 80px; }
+  .dash-hero { background: #1B2E4B; padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .dash-greeting { font-size: 12px; color: rgba(255,255,255,0.35); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+  .dash-name { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 400; color: #fff; margin-bottom: 16px; }
+  .dash-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .stat-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); padding: 12px; text-align: center; }
+  .stat-val { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; color: #D4A843; line-height: 1; margin-bottom: 4px; }
+  .stat-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+  .dash-section { padding: 24px 20px 0; }
+  .dash-section-title { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 14px; }
+  .action-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+  .action-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); padding: 18px 16px; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
+  .action-card:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+  .action-card.maestro { border-top: 2px solid #1A6B3A; }
+  .action-card.allievo { border-top: 2px solid #1A3A6B; }
+  .action-card-icon { font-size: 20px; margin-bottom: 10px; }
+  .action-card-title { font-size: 13px; font-weight: 500; color: #fff; margin-bottom: 4px; }
+  .action-card-desc { font-size: 11px; color: rgba(255,255,255,0.35); line-height: 1.5; }
+  .badge-maestro { display: inline-block; background: rgba(26,107,58,0.15); border: 1px solid rgba(26,107,58,0.3); color: #4CAF7D; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; margin-bottom: 8px; }
+  .badge-allievo { display: inline-block; background: rgba(26,58,107,0.2); border: 1px solid rgba(26,58,107,0.4); color: #6B9FD4; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; margin-bottom: 8px; }
+  .competenza-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+  .comp-info .comp-title { font-size: 14px; font-weight: 500; color: #fff; margin-bottom: 2px; }
+  .comp-info .comp-area { font-size: 11px; color: rgba(255,255,255,0.35); }
+  .comp-skilly { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 300; color: #D4A843; }
+  .comp-skilly span { font-size: 10px; color: rgba(255,255,255,0.3); font-family: 'DM Sans', sans-serif; }
+
+  /* BOTTOM NAV */
+  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: #1B2E4B; border-top: 1px solid rgba(255,255,255,0.07); display: flex; z-index: 20; }
+  .nav-item { flex: 1; padding: 12px 8px; text-align: center; cursor: pointer; transition: background 0.2s; }
+  .nav-item:hover { background: rgba(255,255,255,0.04); }
+  .nav-item.active .nav-icon { color: #D4A843; }
+  .nav-icon { font-size: 18px; margin-bottom: 2px; }
+  .nav-label { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+  .nav-item.active .nav-label { color: #D4A843; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const SKILLY_LIVELLI = {
+  '2': { label: 'Scuola elementare', skilly: 2 },
+  '5': { label: 'Liceo standard', skilly: 5 },
+  '8': { label: 'Liceo avanzato / Triennale', skilly: 8 },
+  '12': { label: 'Magistrale', skilly: 12 },
+  '20': { label: 'Dottorato', skilly: 20 },
+  '26': { label: 'Professionista 10+ anni', skilly: 26 },
+};
+
+function Topbar({ showWallet, wallet, steps, currentStep }) {
+  return (
+    <div className="topbar">
+      <div className="topbar-logo">B<span>O</span>K</div>
+      {showWallet ? (
+        <div className="topbar-wallet">
+          <span className="topbar-wallet-val">{wallet}</span>
+          <span className="topbar-wallet-label">Skilly</span>
+        </div>
+      ) : steps ? (
+        <div className="progress-dots">
+          {[1,2,3].map(i => (
+            <div key={i} className={`pdot ${i < currentStep ? 'done' : i === currentStep ? 'active' : ''}`}></div>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function Step1({ onNext }) {
+  const [form, setForm] = useState({ nome: '', cognome: '', nascita: '', email: '', password: '', citta: '' });
+  const set = (k, v) => setForm(f => ({...f, [k]: v}));
+  return (
+    <div>
+      <Topbar steps currentStep={1} />
+      <div className="content">
+        <p className="step-label">Passo 1 di 3</p>
+        <h2 className="screen-title">Chi sei?</h2>
+        <p className="screen-sub">Iniziamo con i tuoi dati. Servono per verificare la tua identità e proteggere tutti gli utenti.</p>
+        <div className="row2">
+          <div className="field"><label>Nome</label><input type="text" placeholder="Mario" value={form.nome} onChange={e=>set('nome',e.target.value)} /></div>
+          <div className="field"><label>Cognome</label><input type="text" placeholder="Rossi" value={form.cognome} onChange={e=>set('cognome',e.target.value)} /></div>
+        </div>
+        <div className="field"><label>Data di nascita</label><input type="date" value={form.nascita} onChange={e=>set('nascita',e.target.value)} /></div>
+        <div className="field"><label>Email</label><input type="email" placeholder="mario@email.com" value={form.email} onChange={e=>set('email',e.target.value)} /></div>
+        <div className="field"><label>Password</label><input type="password" placeholder="Minimo 8 caratteri" value={form.password} onChange={e=>set('password',e.target.value)} /></div>
+        <div className="field"><label>Città</label><input type="text" placeholder="Roma" value={form.citta} onChange={e=>set('citta',e.target.value)} /></div>
+        <button className="btn" onClick={() => onNext(form)}>Avanti →</button>
+        <p className="note">I tuoi dati sono al sicuro. Nessuna cessione a terzi.</p>
+        <div className="divider"></div>
+        <p className="link-text">Hai già un account? <span>Accedi</span></p>
+      </div>
+    </div>
+  );
+}
+
+function Step2({ onNext, onBack }) {
+  const [doc, setDoc] = useState(false);
+  const [selfie, setSelfie] = useState(false);
+  return (
+    <div>
+      <Topbar steps currentStep={2} />
+      <div className="content">
+        <p className="step-label">Passo 2 di 3</p>
+        <h2 className="screen-title">Verifica<br/>identità</h2>
+        <p className="screen-sub">BOK verifica chi sei prima di attivare il tuo account. È una misura di sicurezza per proteggere tutti.</p>
+        <div className={`kyc-box ${doc ? 'done' : ''}`} onClick={() => setDoc(true)}>
+          <div className="kyc-icon">🪪</div>
+          <p className="kyc-label">
+            {doc ? 'Documento caricato ✓' : 'Carica documento d\'identità'}
+            {!doc && <span className="kyc-note">Carta d'identità o passaporto — fronte e retro</span>}
+          </p>
+        </div>
+        <div className={`kyc-box ${selfie ? 'done' : ''}`} onClick={() => setSelfie(true)}>
+          <div className="kyc-icon">🤳</div>
+          <p className="kyc-label">
+            {selfie ? 'Selfie caricato ✓' : 'Scatta un selfie con il documento'}
+            {!selfie && <span className="kyc-note">Tieni il documento accanto al viso, ben visibile</span>}
+          </p>
+        </div>
+        <p className="note" style={{textAlign:'left', marginBottom:'20px'}}>La verifica avviene entro 24 ore. Riceverai una email di conferma. Nel frattempo puoi continuare la configurazione.</p>
+        <button className="btn" onClick={onNext}>Avanti →</button>
+        <button className="btn-outline" onClick={onBack}>← Indietro</button>
+      </div>
+    </div>
+  );
+}
+
+function Step3({ onNext, onBack }) {
+  const [area, setArea] = useState('');
+  const [livello, setLivello] = useState('');
+  const [desc, setDesc] = useState('');
+  const skilly = livello ? SKILLY_LIVELLI[livello]?.skilly : null;
+  return (
+    <div>
+      <Topbar steps currentStep={3} />
+      <div className="content">
+        <p className="step-label">Passo 3 di 3</p>
+        <h2 className="screen-title">Cosa sai fare?</h2>
+        <p className="screen-sub">Deposita la tua prima competenza. Questa è la fonte dei tuoi Skilly — la valuta con cui imparerai da altri.</p>
+        <div className="field">
+          <label>Area di competenza</label>
+          <select value={area} onChange={e => setArea(e.target.value)}>
+            <option value="">Scegli un'area...</option>
+            <option value="istruzione">Istruzione e Scienze Accademiche</option>
+            <option value="lingue">Lingue</option>
+            <option value="informatica">Informatica e Tecnologia</option>
+            <option value="giuridico">Giuridico ed Economico</option>
+            <option value="salute">Salute e Professioni Sanitarie</option>
+            <option value="ingegneria">Ingegneria e Architettura</option>
+            <option value="arte">Arte e Discipline Creative</option>
+            <option value="musica">Musica</option>
+            <option value="sport">Sport e Movimento</option>
+            <option value="business">Business e Management</option>
+          </select>
+        </div>
+        <div className="field">
+          <label>Livello</label>
+          <select value={livello} onChange={e => setLivello(e.target.value)}>
+            <option value="">Scegli il tuo livello...</option>
+            {Object.entries(SKILLY_LIVELLI).map(([k, v]) => (
+              <option key={k} value={k}>{v.label} — {v.skilly} Skilly/ora</option>
+            ))}
+          </select>
+        </div>
+        <div className="field">
+          <label>Descrivi brevemente cosa insegni</label>
+          <input type="text" placeholder="Es: Matematica per liceo scientifico, analisi e algebra" value={desc} onChange={e => setDesc(e.target.value)} />
+        </div>
+        {skilly && (
+          <div className="skilly-box">
+            <div className="skilly-box-val">{skilly}</div>
+            <div className="skilly-box-text">
+              <p className="slabel">Skilly per ogni ora</p>
+              <p className="sdesc">Guadagni {skilly} Skilly ogni volta che insegni questa materia per un'ora.</p>
+            </div>
+          </div>
+        )}
+        <button className="btn" style={{marginTop:'20px'}} onClick={() => onNext({ area, livello, desc, skilly })}>Completa iscrizione →</button>
+        <button className="btn-outline" onClick={onBack}>← Indietro</button>
+      </div>
+    </div>
+  );
+}
+
+function Benvenuto({ userData, competenza, onDashboard }) {
+  return (
+    <div>
+      <Topbar />
+      <div className="welcome-screen">
+        <p className="step-label">Iscrizione completata</p>
+        <h2 className="screen-title">Benvenuto<br/>in BOK.</h2>
+        <p className="screen-sub" style={{marginBottom:'20px'}}>Il tuo account è stato creato. La verifica identità è in corso — riceverai una email entro 24 ore.</p>
+        <div className="welcome-badge">
+          <span className="welcome-badge-icon">✓</span>
+          <div className="welcome-badge-text">
+            <strong>Identità in verifica</strong>
+            Riceverai conferma entro 24 ore
+          </div>
+        </div>
+        <p style={{fontSize:'12px', color:'rgba(255,255,255,0.35)', letterSpacing:'0.15em', textTransform:'uppercase', marginBottom:'12px'}}>La tua prima competenza</p>
+        <div className="competenza-card">
+          <div className="comp-info">
+            <p className="comp-title">{competenza.desc || 'Competenza depositata'}</p>
+            <p className="comp-area">{competenza.area} · {SKILLY_LIVELLI[competenza.livello]?.label}</p>
+          </div>
+          <div>
+            <div className="comp-skilly">{competenza.skilly}<span>/ora</span></div>
+          </div>
+        </div>
+        {competenza.skilly && (
+          <div className="skilly-welcome-badge">
+            <div className="skilly-welcome-val">{competenza.skilly}</div>
+            <div className="skilly-welcome-text">
+              <p className="sl">Skilly per ora</p>
+              <p className="sd">Guadagni ogni volta che insegni questa materia</p>
+            </div>
+          </div>
+        )}
+        <div className="welcome-steps">
+          <p style={{fontSize:'10px', letterSpacing:'0.2em', textTransform:'uppercase', color:'rgba(255,255,255,0.3)', marginBottom:'16px'}}>Cosa succede adesso</p>
+          <div className="welcome-step">
+            <div className="welcome-step-num">1</div>
+            <div className="welcome-step-body">
+              <p className="wtitle">Aspetti la verifica identità</p>
+              <p className="wdesc">BOK verifica il tuo documento entro 24 ore. Riceverai una email.</p>
+            </div>
+          </div>
+          <div className="welcome-step">
+            <div className="welcome-step-num">2</div>
+            <div className="welcome-step-body">
+              <p className="wtitle">Eroghi la tua prima lezione</p>
+              <p className="wdesc">Qualcuno ti prenota una sessione. Ti colleghi in videochiamata e insegni. Guadagni i tuoi Skilly.</p>
+            </div>
+          </div>
+          <div className="welcome-step">
+            <div className="welcome-step-num">3</div>
+            <div className="welcome-step-body">
+              <p className="wtitle">Usi gli Skilly per imparare</p>
+              <p className="wdesc">Con gli Skilly accumulati prenoti lezioni da chiunque altro sulla piattaforma. Zero euro.</p>
+            </div>
+          </div>
+        </div>
+        <button className="btn btn-maestro" onClick={onDashboard}>Vai alla dashboard →</button>
+      </div>
+    </div>
+  );
+}
+
+function Dashboard({ userData, competenza }) {
+  const [tab, setTab] = useState('home');
+  const skilly = competenza?.skilly || 0;
+  return (
+    <div>
+      <Topbar showWallet wallet={skilly} />
+      <div className="dashboard">
+        <div className="dash-hero">
+          <p className="dash-greeting">Bentornato</p>
+          <p className="dash-name">{userData?.nome || 'Paolo'} {userData?.cognome || 'Galli'}</p>
+          <div className="dash-stats">
+            <div className="stat-card">
+              <p className="stat-val">{skilly}</p>
+              <p className="stat-label">Skilly</p>
+            </div>
+            <div className="stat-card">
+              <p className="stat-val">0</p>
+              <p className="stat-label">Sessioni</p>
+            </div>
+            <div className="stat-card">
+              <p className="stat-val">—</p>
+              <p className="stat-label">Media</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="dash-section">
+          <p className="dash-section-title">Cosa vuoi fare?</p>
+          <div className="action-cards">
+            <div className="action-card maestro">
+              <div className="badge-maestro">Maestro</div>
+              <div className="action-card-icon">📚</div>
+              <p className="action-card-title">Eroga una lezione</p>
+              <p className="action-card-desc">Guarda chi ti ha prenotato e guadagna Skilly</p>
+            </div>
+            <div className="action-card allievo">
+              <div className="badge-allievo">Allievo</div>
+              <div className="action-card-icon">🔍</div>
+              <p className="action-card-title">Trova un Maestro</p>
+              <p className="action-card-desc">Cerca nel catalogo e prenota una sessione</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="dash-section">
+          <p className="dash-section-title">Le tue competenze</p>
+          {competenza?.area ? (
+            <div className="competenza-card">
+              <div className="comp-info">
+                <p className="comp-title">{competenza.desc || 'Competenza'}</p>
+                <p className="comp-area">{competenza.area} · {SKILLY_LIVELLI[competenza.livello]?.label}</p>
+              </div>
+              <div>
+                <div className="comp-skilly">{competenza.skilly}<span>/h</span></div>
+              </div>
+            </div>
+          ) : (
+            <p style={{fontSize:'13px', color:'rgba(255,255,255,0.25)', marginBottom:'16px'}}>Nessuna competenza depositata.</p>
+          )}
+          <button className="btn-outline" style={{marginTop:'4px'}}>+ Aggiungi competenza</button>
+        </div>
+
+        <div className="dash-section" style={{marginTop:'24px'}}>
+          <p className="dash-section-title">Prossime sessioni</p>
+          <p style={{fontSize:'13px', color:'rgba(255,255,255,0.25)', padding:'20px 0'}}>Nessuna sessione programmata.</p>
+        </div>
+      </div>
+
+      <div className="bottom-nav">
+        <div className={`nav-item ${tab==='home'?'active':''}`} onClick={()=>setTab('home')}>
+          <div className="nav-icon">⌂</div>
+          <div className="nav-label">Home</div>
+        </div>
+        <div className={`nav-item ${tab==='catalogo'?'active':''}`} onClick={()=>setTab('catalogo')}>
+          <div className="nav-icon">◫</div>
+          <div className="nav-label">Catalogo</div>
+        </div>
+        <div className={`nav-item ${tab==='sessioni'?'active':''}`} onClick={()=>setTab('sessioni')}>
+          <div className="nav-icon">◷</div>
+          <div className="nav-label">Sessioni</div>
+        </div>
+        <div className={`nav-item ${tab==='profilo'?'active':''}`} onClick={()=>setTab('profilo')}>
+          <div className="nav-icon">◉</div>
+          <div className="nav-label">Profilo</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [screen, setScreen] = useState('step1');
+  const [userData, setUserData] = useState({});
+  const [competenza, setCompetenza] = useState({});
+
+  return (
+    <div className="app-frame">
+      {screen === 'step1' && <Step1 onNext={data => { setUserData(data); setScreen('step2'); }} />}
+      {screen === 'step2' && <Step2 onNext={() => setScreen('step3')} onBack={() => setScreen('step1')} />}
+      {screen === 'step3' && <Step3 onNext={data => { setCompetenza(data); setScreen('benvenuto'); }} onBack={() => setScreen('step2')} />}
+      {screen === 'benvenuto' && <Benvenuto userData={userData} competenza={competenza} onDashboard={() => setScreen('dashboard')} />}
+      {screen === 'dashboard' && <Dashboard userData={userData} competenza={competenza} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
