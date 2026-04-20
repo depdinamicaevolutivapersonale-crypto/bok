@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOK — Barter Of Knowledge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --brand:       #1B2E4B;
+    --brand-deep:  #0D1B2E;
+    --maestro:     #1A6B3A;
+    --allievo:     #1A3A6B;
+    --gold:        #B8860B;
+    --gold-light:  #D4A843;
+    --surface:     #FAFAF8;
+    --surface-2:   #F4F2EE;
+    --text:        #1B2E4B;
+    --text-muted:  #6B7280;
+    --white:       #FFFFFF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* ─── UTILITY ─────────────────────────────────────── */
+  .serif { font-family: 'Cormorant Garamond', serif; }
+  .gold  { color: var(--gold-light); }
+
+  /* ─── HERO ─────────────────────────────────────────── */
+  #hero {
+    min-height: 100vh;
+    background: var(--brand-deep);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px 60px;
+    overflow: hidden;
+  }
+
+  /* Subtle grain overlay */
+  #hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.4;
+  }
+
+  /* Radial glow behind headline */
+  #hero::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(184,134,11,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.1s forwards;
+  }
+
+  .hero-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(80px, 18vw, 160px);
+    font-weight: 300;
+    line-height: 1;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.2s forwards;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-logo span {
+    color: var(--gold-light);
+  }
+
+  .hero-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(18px, 3.5vw, 26px);
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(255,255,255,0.65);
+    text-align: center;
+    margin-top: 20px;
+    letter-spacing: 0.03em;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.35s forwards;
+  }
+
+  .hero-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 48px auto;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.45s forwards;
+  }
+
+  .hero-statement {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(22px, 4vw, 34px);
+    font-weight: 400;
+    color: var(--white);
+    text-align: center;
+    max-width: 780px;
+    line-height: 1.45;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.55s forwards;
+  }
+
+  .hero-statement em {
+    color: var(--gold-light);
+    font-style: normal;
+  }
+
+  .hero-cta-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 56px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.7s forwards;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--brand-deep);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 18px 48px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.25s, transform 0.2s;
+  }
+  .btn-primary:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+  }
+
+  .hero-note {
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── COUNTER ───────────────────────────────────────── */
+  #counter-band {
+    background: var(--brand);
+    padding: 28px 24px;
+    text-align: center;
+    border-top: 1px solid rgba(184,134,11,0.2);
+    border-bottom: 1px solid rgba(184,134,11,0.2);
+  }
+  #counter-band p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  #counter-band strong {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 300;
+    color: var(--gold-light);
+    display: block;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+
+  /* ─── PROBLEM SECTION ───────────────────────────────── */
+  #problem {
+    background: var(--surface-2);
+    padding: 120px 24px;
+  }
+
+  .section-inner {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 6vw, 58px);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--brand-deep);
+    margin-bottom: 40px;
+  }
+
+  .manifesto-block {
+    border-left: 2px solid var(--gold);
+    padding-left: 32px;
+    margin: 48px 0;
+  }
+
+  .manifesto-block p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(20px, 2.8vw, 26px);
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--brand);
+    margin-bottom: 24px;
+  }
+
+  .manifesto-block p:last-child { margin-bottom: 0; }
+
+  .body-text {
+    font-size: 17px;
+    line-height: 1.75;
+    color: #374151;
+    margin-bottom: 20px;
+  }
+
+  /* ─── THREE TRUTHS ──────────────────────────────────── */
+  #truths {
+    background: var(--brand-deep);
+    padding: 120px 24px;
+  }
+
+  .truths-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2px;
+    margin-top: 64px;
+  }
+
+  .truth-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 48px 40px;
+    transition: background 0.3s;
+  }
+  .truth-card:hover { background: rgba(255,255,255,0.06); }
+
+  .truth-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    font-weight: 300;
+    color: rgba(184,134,11,0.2);
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .truth-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  .truth-body {
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.5);
+  }
+
+  #truths .section-label { color: var(--gold-light); }
+  #truths .section-title { color: var(--white); }
+
+  /* ─── HOW IT WORKS ──────────────────────────────────── */
+  #how {
+    background: var(--surface);
+    padding: 120px 24px;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0;
+    margin-top: 64px;
+    position: relative;
+  }
+
+  .step {
+    padding: 48px 36px;
+    border-top: 2px solid transparent;
+    transition: border-color 0.3s;
+    position: relative;
+  }
+  .step:hover { border-top-color: var(--gold); }
+
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--brand-deep);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .step-body {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+
+  .step-connector {
+    position: absolute;
+    top: 68px;
+    right: -1px;
+    width: 2px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    display: none;
+  }
+
+  /* ─── QUOTE BREAK ───────────────────────────────────── */
+  #quote-break {
+    background: var(--brand);
+    padding: 100px 24px;
+    text-align: center;
+  }
+
+  .big-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--white);
+    max-width: 900px;
+    margin: 0 auto;
+    line-height: 1.4;
+  }
+
+  .big-quote em {
+    color: var(--gold-light);
+    font-style: normal;
+  }
+
+  .quote-attr {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-top: 32px;
+  }
+
+  /* ─── SKILLY EXPLAINER ──────────────────────────────── */
+  #skilly {
+    background: var(--surface-2);
+    padding: 120px 24px;
+  }
+
+  .skilly-flex {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+    margin-top: 64px;
+  }
+
+  .skilly-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  .skilly-table th {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid #E5E2DC;
+    padding: 12px 16px 12px 0;
+    text-align: left;
+  }
+
+  .skilly-table td {
+    font-size: 14px;
+    padding: 12px 16px 12px 0;
+    border-bottom: 1px solid #E5E2DC;
+    color: var(--text);
+    vertical-align: middle;
+  }
+
+  .skilly-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+
+  .skilly-text-col p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--brand-deep);
+    margin-bottom: 24px;
+  }
+
+  .skilly-rule {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .skilly-rule-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    background: var(--brand-deep);
+    color: var(--gold-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+
+  .skilly-rule-text {
+    font-size: 15px;
+    line-height: 1.65;
+    color: #374151;
+  }
+
+  /* ─── FORM SECTION ──────────────────────────────────── */
+  #form-section {
+    background: var(--brand-deep);
+    padding: 120px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #form-section::before {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(184,134,11,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .form-wrap {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .form-wrap .section-label { color: var(--gold-light); }
+
+  .form-wrap .section-title {
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  .form-subtitle {
+    font-size: 16px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.65;
+    margin-bottom: 48px;
+  }
+
+  /* Tally embed container */
+  .tally-container {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 48px 40px;
+    position: relative;
+  }
+
+  /* Native form fallback */
+  .bok-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .bok-form input {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    padding: 16px 20px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .bok-form input::placeholder {
+    color: rgba(255,255,255,0.3);
+  }
+
+  .bok-form input:focus {
+    border-color: var(--gold);
+    background: rgba(255,255,255,0.08);
+  }
+
+  .bok-form button {
+    background: var(--gold);
+    color: var(--brand-deep);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 18px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.2s;
+    margin-top: 8px;
+  }
+
+  .bok-form button:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+  }
+
+  .form-privacy {
+    font-size: 12px;
+    color: rgba(255,255,255,0.25);
+    margin-top: 20px;
+    line-height: 1.6;
+  }
+
+  .success-msg {
+    display: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.5;
+    padding: 48px 0;
+  }
+
+  .success-msg span { color: var(--gold-light); }
+
+  /* ─── FOOTER ────────────────────────────────────────── */
+  footer {
+    background: var(--brand-deep);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 40px 24px;
+    text-align: center;
+  }
+
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+
+  .footer-tagline {
+    font-size: 12px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* ─── ANIMATIONS ────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── RESPONSIVE ────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .skilly-flex {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+    .truths-grid {
+      grid-template-columns: 1fr;
+    }
+    .steps {
+      grid-template-columns: 1fr;
+    }
+    .tally-container {
+      padding: 32px 24px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════ -->
+<section id="hero">
+  <p class="hero-eyebrow">Barter Of Knowledge</p>
+  <h1 class="hero-logo">B<span>O</span>K</h1>
+  <p class="hero-tagline">La prima economia della conoscenza umana</p>
+  <div class="hero-divider"></div>
+  <p class="hero-statement">
+    Non si compra. Non si vende.<br>
+    Si <em>trasmette</em> — e si riceve.<br>
+    Perché la conoscenza che non circola <em>tradisce</em>.
+  </p>
+  <div class="hero-cta-group">
+    <a href="#form-section" class="btn-primary">Voglio essere tra i primi</a>
+    <span class="hero-note">Accesso anticipato — lista chiusa ai primi 200</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     COUNTER BAND
+══════════════════════════════════════════════ -->
+<div id="counter-band">
+  <strong id="counter-num">0</strong>
+  <p>persone già in lista d'attesa</p>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     PROBLEM — IL MANIFESTO
+══════════════════════════════════════════════ -->
+<section id="problem">
+  <div class="section-inner">
+    <p class="section-label reveal">L'unico crimine che nessuno chiama crimine</p>
+    <h2 class="section-title reveal">Ogni giorno muore qualcosa<br>che nessuno piangerà.</h2>
+
+    <p class="body-text reveal">
+      Come si entra in un'aula e si tiene una classe. Come si legge un bilancio e si sente dove l'azienda sta mentendo. Come si accordava uno strumento prima che esistessero le app per farlo.
+    </p>
+    <p class="body-text reveal">
+      Nessuno lo piangerà. Nessuno lo cercherà. Semplicemente, non ci sarà più. La conoscenza umana — l'unica cosa davvero irriproducibile che esiste — muore con chi la possiede perché non abbiamo costruito un posto dove trasmetterla.
+    </p>
+    <p class="body-text reveal" style="font-weight:500; color: var(--brand-deep);">Fino ad oggi.</p>
+
+    <div class="manifesto-block reveal">
+      <p>L'AI sa tutto.<br>E questo è esattamente il problema.</p>
+      <p>Ottieni una risposta in tre secondi. Corretta, articolata, ben formattata. E poi sei solo. Con la risposta. Senza nessuno che ti abbia guardato mentre capivi.</p>
+      <p>L'AI ha risolto il problema dell'accesso all'informazione.<br>Ha creato il problema della <strong>trasmissione umana</strong>.</p>
+    </div>
+
+    <p class="body-text reveal">
+      La conoscenza vera non è un file da scaricare. È un atto tra due persone. Il momento in cui qualcuno che sa incontra qualcuno che vuole capire — e succede qualcosa che non si può codificare, comprimere, o riprodurre in scala.
+    </p>
+    <p class="body-text reveal" style="font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight:500; color: var(--brand-deep); line-height: 1.4;">
+      BOK esiste in quel momento.
+    </p>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     THREE TRUTHS
+══════════════════════════════════════════════ -->
+<section id="truths">
+  <div class="section-inner">
+    <p class="section-label reveal">Come funziona davvero</p>
+    <h2 class="section-title reveal">Tre verità<br>che cambiano tutto.</h2>
+  </div>
+  <div style="max-width:1100px; margin:0 auto; padding:0 24px;">
+    <div class="truths-grid">
+      <div class="truth-card reveal">
+        <div class="truth-number">01</div>
+        <h3 class="truth-title">Non si compra.<br>Non si vende.</h3>
+        <p class="truth-body">In BOK non entra un euro. Mai. La valuta è la conoscenza stessa — misurata, pesata, scambiata tra persone reali. Nessun intermediario. Nessuna commissione. Solo competenze che circolano.</p>
+      </div>
+      <div class="truth-card reveal">
+        <div class="truth-number">02</div>
+        <h3 class="truth-title">Un'ora non vale<br>un'ora.</h3>
+        <p class="truth-body">La valuta interna si chiama Skilly. Vale la complessità e la profondità di quello che contiene. Un'ora di dottorato non vale come un'ora di scuola media. Il merito conta. Sempre.</p>
+      </div>
+      <div class="truth-card reveal">
+        <div class="truth-number">03</div>
+        <h3 class="truth-title">Prima dai.<br>Poi ricevi.</h3>
+        <p class="truth-body">La regola è assoluta e senza eccezioni. Depositi la tua conoscenza. Diventi Maestro. Accumuli Skilly. Solo allora puoi diventare Allievo e ricevere quello che non sai. Il ciclo non si spezza.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     HOW IT WORKS
+══════════════════════════════════════════════ -->
+<section id="how">
+  <div class="section-inner">
+    <p class="section-label reveal">La sequenza</p>
+    <h2 class="section-title reveal">Quattro passi.<br>Un'economia nuova.</h2>
+  </div>
+  <div style="max-width:1100px; margin: 0 auto; padding:0 24px;">
+    <div class="steps">
+      <div class="step reveal">
+        <p class="step-num">Passo 01</p>
+        <h3 class="step-title">Depositi<br>la competenza</h3>
+        <p class="step-body">Dichiari quello che sai. BOK lo verifica, lo cataloga, gli assegna il valore giusto in Skilly. Il tuo sapere entra nell'ecosistema.</p>
+      </div>
+      <div class="step reveal">
+        <p class="step-num">Passo 02</p>
+        <h3 class="step-title">Diventi<br>Maestro</h3>
+        <p class="step-body">Eroghi sessioni online a chi ne ha bisogno. Un Maestro, un Allievo. Nessuna classe. Nessuna registrazione. Solo trasmissione umana reale.</p>
+      </div>
+      <div class="step reveal">
+        <p class="step-num">Passo 03</p>
+        <h3 class="step-title">Accumuli<br>gli Skilly</h3>
+        <p class="step-body">Al termine di ogni sessione, l'Allievo valuta la qualità della trasmissione. La valutazione sblocca i tuoi Skilly. La qualità ha un prezzo.</p>
+      </div>
+      <div class="step reveal">
+        <p class="step-num">Passo 04</p>
+        <h3 class="step-title">Diventi<br>Allievo</h3>
+        <p class="step-body">Usi gli Skilly accumulati per ricevere competenze che non possiedi. Dalle elementari al dottorato. Da 10 macro-aree, oltre 100 domini. L'accesso è senza barriere economiche.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     QUOTE BREAK
+══════════════════════════════════════════════ -->
+<section id="quote-break">
+  <p class="big-quote reveal">
+    "Nell'era in cui l'AI sa tutto, l'unica cosa che non può replicare sei <em>tu</em> — mentre insegni."
+  </p>
+  <p class="quote-attr reveal">Dal Manifesto BOK</p>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SKILLY EXPLAINER
+══════════════════════════════════════════════ -->
+<section id="skilly">
+  <div class="section-inner">
+    <p class="section-label reveal">La valuta</p>
+    <h2 class="section-title reveal">Gli Skilly.<br>Perché non tutti i saperi<br>pesano lo stesso.</h2>
+  </div>
+
+  <div style="max-width:1100px; margin:0 auto; padding:0 24px;">
+    <div class="skilly-flex">
+      <div class="skilly-text-col reveal">
+        <p>Gli Skilly non sono punti. Non sono crediti. Non sono criptovaluta.<br>Sono la misura della rarità della conoscenza.</p>
+        <p>La regola è semplice quanto rivoluzionaria: più è profondo quello che sai, più valgono le tue ore. Più vuoi ricevere, più devi prima dare.</p>
+
+        <div class="skilly-rule">
+          <div class="skilly-rule-icon">↺</div>
+          <p class="skilly-rule-text"><strong>Non scadono mai.</strong> Si ibernano dopo 24 mesi senza attività. Si riattivano alla prima sessione erogata.</p>
+        </div>
+        <div class="skilly-rule">
+          <div class="skilly-rule-icon">⊘</div>
+          <p class="skilly-rule-text"><strong>Non si trasferiscono.</strong> Sono tuoi. Solo tuoi. Non cedibili, non vendibili, non ereditabili.</p>
+        </div>
+        <div class="skilly-rule">
+          <div class="skilly-rule-icon">∞</div>
+          <p class="skilly-rule-text"><strong>Nessun tetto.</strong> Puoi accumulare quanto vuoi. BOK non limita chi dà di più.</p>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <p style="font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-muted); margin-bottom:16px;">Estratto dalla griglia Skilly v1.0</p>
+        <table class="skilly-table">
+          <thead>
+            <tr>
+              <th>Livello</th>
+              <th>Descrizione</th>
+              <th>Skilly/h</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>L1</td><td>Scuola elementare</td><td><span class="skilly-val">2</span></td></tr>
+            <tr><td>L3b</td><td>Liceo avanzato cl. 1-2</td><td><span class="skilly-val">6</span></td></tr>
+            <tr><td>L4b</td><td>Triennale STEM anno 1-2</td><td><span class="skilly-val">10</span></td></tr>
+            <tr><td>L5b</td><td>Magistrale STEM anno 1</td><td><span class="skilly-val">14</span></td></tr>
+            <tr><td>L6b</td><td>Dottorato attivo</td><td><span class="skilly-val">20</span></td></tr>
+            <tr><td>L7c</td><td>Professionista 10+ anni</td><td><span class="skilly-val" style="color:var(--gold); font-size:28px;">26</span></td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:12px; color:var(--text-muted); margin-top:12px;">10 macro-aree · 100+ domini · ogni competenza ha il suo livello</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     FORM SECTION
+══════════════════════════════════════════════ -->
+<section id="form-section">
+  <div class="form-wrap">
+    <p class="section-label reveal">Lista d'attesa — posti limitati</p>
+    <h2 class="section-title reveal">Entra prima<br>che la lista si chiuda.</h2>
+    <p class="form-subtitle reveal">
+      I primi 200 iscritti avranno accesso anticipato alla beta, condizioni fondatore e voce nella calibrazione della piattaforma. Nessuna carta di credito. Solo il tuo nome e la tua email.
+    </p>
+
+    <div class="tally-container reveal">
+      <!--
+        ISTRUZIONI TALLY:
+        1. Vai su tally.so e crea un form con due campi: "Nome" e "Email"
+        2. Copia l'embed code che Tally ti fornisce (es: <iframe data-tally-src="https://tally.so/embed/XXXXXX" ...>)
+        3. Sostituisci il blocco ".bok-form" qui sotto con l'iframe Tally
+        4. Cancella anche il JavaScript del form qui sotto
+        
+        TEMPORANEAMENTE — form nativo funzionante:
+      -->
+      <iframe data-tally-src="https://tally.so/embed/VL1qJ6?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="300" frameborder="0" marginheight="0" marginwidth="0" title="BOK — Lista d'attesa" style="background:transparent;"></iframe>
+      <script async src="https://tally.so/widgets/embed.js"></script>
+      <p class="form-privacy">Nessuno spam. Nessuna cessione dei dati a terzi. Solo una email quando apriremo.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════ -->
+<footer>
+  <p class="footer-logo">BOK</p>
+  <p class="footer-tagline">Barter Of Knowledge · Perché la conoscenza che non circola tradisce.</p>
+</footer>
+
+
+<!-- ══════════════════════════════════════════════
+     JS
+══════════════════════════════════════════════ -->
+<script>
+  // ─── Intersection Observer per reveal ───────────
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ─── Counter animato (simulato) ─────────────────
+  // Sostituisci con il dato reale da Tally o dal tuo backend
+  function animateCounter(target, duration) {
+    const el = document.getElementById('counter-num');
+    const start = 0;
+    const step = target / (duration / 16);
+    let current = start;
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      el.textContent = Math.floor(current);
+    }, 16);
+  }
+
+  // Valore da aggiornare manualmente o via API Tally/Mailchimp
+  // Per ora mostra 0 — sostituisci con il numero reale
+  const ISCRITTI_ATTUALI = 0;
+  
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateCounter(ISCRITTI_ATTUALI, 1200);
+        counterObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  counterObserver.observe(document.getElementById('counter-band'));
+
+  // ─── Form nativo (rimpiazzare con Tally embed) ──
+  document.getElementById('bokForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const nome = document.getElementById('nome').value;
+    document.getElementById('successNome').textContent = nome;
+    document.getElementById('bokForm').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+    // Qui puoi aggiungere una chiamata fetch() al tuo backend
+    // oppure lasciare che Tally gestisca tutto con il suo embed
+  });
+</script>
+
+</body>
+</html>
